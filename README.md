@@ -1,4 +1,3 @@
-```markdown
 # 🛡️ JWTEK - JWT Security Analysis & Exploitation Tool
 
 **JWTEK** is a powerful command-line tool that helps security engineers and red teamers analyze, identify, and exploit common vulnerabilities in JSON Web Tokens (JWT).

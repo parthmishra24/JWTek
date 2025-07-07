@@ -1,5 +1,5 @@
 import argparse
-from core import parser, static_analysis, brute_forcer, exploits, validator  # 👈 Add `validator.py`
+from core import parser, static_analysis, brute_forcer, exploits, validator
 
 def main():
     parser_cli = argparse.ArgumentParser(
@@ -30,12 +30,18 @@ def main():
     if args.command == 'analyze':
         token = args.token
         header, payload, signature = parser.decode_jwt(token)
+
         if not header or not payload:
             print("[!] Could not decode JWT. Check if the format is valid.")
             return
 
+        # Show header, payload, and base64 signature
+        parser.pretty_print_jwt(header, payload, signature)
+
+        # Static checks
         static_analysis.run_all_checks(header, payload)
 
+        # Optional RS256 signature validation
         if args.pubkey:
             validator.verify_signature_rs256(token, args.pubkey)
 

@@ -95,6 +95,16 @@ python3 jwtek.py analyze --token <JWT> --pubkey ./public.pem
 python3 jwtek.py brute-force --token <JWT> --wordlist testlist.txt
 ```
 
+Preset names such as `rockyou`, `jwt-secrets`, and `top10` can be used in place
+of a file path. JWTEK expects these wordlists at the following locations:
+
+- `rockyou` → `/usr/share/wordlists/rockyou.txt`
+- `jwt-secrets` → `data/wordlists/jwt-secrets.txt`
+- `top10` → `data/wordlists/top10.txt`
+
+If a preset wordlist isn't found at its location, JWTEK will display an error
+and you can supply your own wordlist path with `--wordlist`.
+
 ### 💣 Exploitation Guidance
 
 ```bash

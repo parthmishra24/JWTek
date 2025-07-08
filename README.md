@@ -49,6 +49,21 @@ JWTEK operates in multiple **modes** to support both black-box and gray-box anal
 
 ---
 
+## Installation
+1. Clone the repository
+   ```
+   git clone https://github.com/parthmishra24/JWTek.git
+   ```
+2. Change the directory
+   ```
+   cd JWTek
+   ```
+3. Run the pip command
+   ```
+   pip3 install -e .
+   ```
+---
+
 ## 🚀 Features
 
 - ✅ Static analysis of JWTs

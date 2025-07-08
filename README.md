@@ -101,9 +101,3 @@ python3 jwtek.py exploit --list
 - 🔗 [LinkedIn](https://www.linkedin.com/in/parthmishra24/)
 
 ---
-
-## 📜 License
-
-This project is licensed for educational and security testing purposes only.  
-Use responsibly and only on systems you have permission to test.
-```

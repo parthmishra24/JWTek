@@ -1,7 +1,6 @@
 import base64
 import json
 import jwt
-from jwt import algorithms
 
 def forge_jwt(alg, payload_str, secret=None, privkey_path=None):
     try:

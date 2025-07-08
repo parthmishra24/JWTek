@@ -41,22 +41,25 @@ def brute_force_hs256(token, wordlist_input):
 
     try:
         with open(wordlist_path, 'r', encoding='utf-8', errors='ignore') as f:
-            # Use line.strip() to remove newlines and trailing spaces
-            words = [line.strip() for line in f if line.strip()]
+            def word_gen():
+                for line in f:
+                    word = line.strip()
+                    if word:
+                        yield word
+
+            for word in tqdm(word_gen(), desc="Trying secrets"):
+                try:
+                    jwt.decode(token, word, algorithms=["HS256"])
+                    print(f"\n[+] Secret key FOUND: '{word}'")
+                    return word
+                except (InvalidSignatureError, DecodeError):
+                    continue
+                except Exception as e:
+                    print(f"[!] Error occurred during decode: {e}")
+                    break
     except Exception as e:
         print(f"[!] Failed to read wordlist: {e}")
         return
-
-    for word in tqdm(words, desc="Trying secrets"):
-        try:
-            jwt.decode(token, word, algorithms=["HS256"])
-            print(f"\n[+] Secret key FOUND: '{word}'")
-            return word
-        except (InvalidSignatureError, DecodeError):
-            continue
-        except Exception as e:
-            print(f"[!] Error occurred during decode: {e}")
-            break
 
     print("[-] Secret not found in the wordlist.")
     return None

@@ -97,8 +97,8 @@ python3 jwtek.py exploit --list
 
 ## 🧠 Author
 
-- **Parth Mishra** – Security Engineer | Red Teamer | Python Builder  
-- 🔗 [LinkedIn](https://linkedin.com/in/parth-mishra)
+- **Parth Mishra** – Security Engineer | AppSec 
+- 🔗 [LinkedIn](https://www.linkedin.com/in/parthmishra24/)
 
 ---
 

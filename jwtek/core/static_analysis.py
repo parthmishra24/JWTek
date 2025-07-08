@@ -1,4 +1,3 @@
-from datetime import datetime
 import time
 
 def run_all_checks(header, payload):

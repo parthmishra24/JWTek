@@ -1,5 +1,4 @@
 import re
-import requests
 
 JWT_REGEX = r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"
 

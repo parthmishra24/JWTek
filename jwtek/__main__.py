@@ -1,5 +1,5 @@
 import argparse
-from core import parser, static_analysis, brute_forcer, exploits, validator, forge, audit, smuggle, extractor, ui
+from jwtek.core import parser, static_analysis, brute_forcer, exploits, validator, forge, audit, smuggle, extractor, ui
 
 def analyze_all_from_file(file_path, pubkey=None, audit_flag=False):
     tokens = extractor.extract_all_jwts_from_file(file_path)

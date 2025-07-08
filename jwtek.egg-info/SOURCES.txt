@@ -1,0 +1,10 @@
+README.md
+setup.py
+jwtek/__init__.py
+jwtek/__main__.py
+jwtek.egg-info/PKG-INFO
+jwtek.egg-info/SOURCES.txt
+jwtek.egg-info/dependency_links.txt
+jwtek.egg-info/entry_points.txt
+jwtek.egg-info/requires.txt
+jwtek.egg-info/top_level.txt

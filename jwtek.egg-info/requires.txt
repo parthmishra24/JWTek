@@ -1,0 +1,4 @@
+pyjwt
+tqdm
+requests
+termcolor

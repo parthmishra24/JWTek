@@ -1,0 +1,3 @@
+[console_scripts]
+jwtek = jwtek.__main__:main
+

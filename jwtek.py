@@ -1,5 +1,5 @@
 import argparse
-from core import parser, static_analysis, brute_forcer, exploits, validator
+from core import parser, static_analysis, brute_forcer, exploits, validator, forge, audit, smuggle
 
 def main():
     parser_cli = argparse.ArgumentParser(
@@ -13,6 +13,7 @@ def main():
     analyze_parser = subparsers.add_parser('analyze', help='Static (or optional RS256) analysis of a JWT')
     analyze_parser.add_argument('--token', required=True, help='JWT string to analyze')
     analyze_parser.add_argument('--pubkey', help='Optional path to public key (PEM) for signature verification')
+    analyze_parser.add_argument('--audit', action='store_true', help='Audit JWT claims for privilege abuse')
 
     # === brute-force ===
     brute_parser = subparsers.add_parser('brute-force', help='Brute-force JWT secret for HS256')
@@ -22,8 +23,25 @@ def main():
     # === exploit ===
     exploit_parser = subparsers.add_parser('exploit', help='Show exploitation guidance')
     exploit_parser.add_argument('--vuln', help='Vulnerability ID (e.g., alg-none)')
-    exploit_parser.add_argument('--secret', help='Optional secret key if needed')
+    exploit_parser.add_argument('--secret', help='Optional secret key (for PoC or bypass)')
+    exploit_parser.add_argument('--url', help='Target URL for bypass testing')
+    exploit_parser.add_argument('--poc', action='store_true', help='Generate PoC token')
+    exploit_parser.add_argument('--bypass', action='store_true', help='Attempt authentication bypass using token')
     exploit_parser.add_argument('--list', action='store_true', help='List available vulnerability IDs')
+
+    # === forge ===
+    forge_parser = subparsers.add_parser('forge', help="Forge a custom JWT token")
+    forge_parser.add_argument('--alg', required=True, help="Algorithm to use (HS256, RS256, none)")
+    forge_parser.add_argument('--payload', required=True, help="JSON payload string")
+    forge_parser.add_argument('--secret', help="Secret key for HS256 (optional)")
+    forge_parser.add_argument('--pubkey', help='Path to RSA public key (for RS256)')
+    forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256)')
+
+    # === smuggle ===
+    smuggle_parser = subparsers.add_parser('smuggle', help='Compare two JWTs for tampering or smuggling')
+    smuggle_parser.add_argument('--token1', required=True, help='Original JWT')
+    smuggle_parser.add_argument('--token2', required=True, help='Potentially tampered JWT')
+    smuggle_parser.add_argument("--o", help="Output path to save the comparison report")
 
     args = parser_cli.parse_args()
 
@@ -35,15 +53,14 @@ def main():
             print("[!] Could not decode JWT. Check if the format is valid.")
             return
 
-        # Show header, payload, and base64 signature
         parser.pretty_print_jwt(header, payload, signature)
-
-        # Static checks
         static_analysis.run_all_checks(header, payload)
 
-        # Optional RS256 signature validation
         if args.pubkey:
             validator.verify_signature_rs256(token, args.pubkey)
+
+        if args.audit:
+            audit.audit_claims(payload)
 
     elif args.command == 'brute-force':
         token = args.token
@@ -54,9 +71,28 @@ def main():
         if args.list:
             exploits.list_available_exploits()
         elif args.vuln:
-            exploits.explain_exploit(args.vuln, secret=args.secret)
+            if args.poc:
+                exploits.generate_poc_token(args.vuln, secret=args.secret)
+            elif args.bypass:
+                if not args.secret or not args.url:
+                    print("[!] --secret and --url are required for bypass testing.")
+                else:
+                    exploits.attempt_bypass(args.vuln, args.secret, args.url)
+            else:
+                exploits.explain_exploit(args.vuln, secret=args.secret)
         else:
             print("[!] Use --vuln to specify a vulnerability ID or --list to see options.")
+
+    elif args.command == 'forge':
+        forge.forge_jwt(
+            alg=args.alg,
+            payload_str=args.payload,
+            secret=args.secret,
+            privkey_path=args.privkey
+        )
+
+    elif args.command == 'smuggle':
+        smuggle.smuggle_compare(args.token1, args.token2, args.o)
 
     else:
         parser_cli.print_help()

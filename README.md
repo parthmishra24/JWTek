@@ -122,7 +122,14 @@ python3 jwtek.py exploit --list
 
 ## 🧠 Author
 
-- **Parth Mishra** – Security Engineer | AppSec 
+- **Parth Mishra** – Security Engineer | AppSec
 - 🔗 [LinkedIn](https://www.linkedin.com/in/parthmishra24/)
 
 ---
+
+## ⚠️ Usage Disclaimer
+
+JWTEK is provided **for educational and authorized security testing purposes only**.
+Any unauthorized or malicious use is strictly prohibited and may violate applicable
+laws. Always obtain explicit permission before testing systems that you do not own.
+

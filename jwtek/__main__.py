@@ -26,7 +26,7 @@ def analyze_all_from_file(file_path, pubkey=None, audit_flag=False):
         if audit_flag:
             audit.audit_claims(payload)
 
-def main():
+def main(argv=None):
     parser_cli = argparse.ArgumentParser(
         prog='jwtek',
         description="🛡️ JWTEK: JWT Security Analysis & Exploitation Tool"
@@ -71,6 +71,7 @@ def main():
     smuggle_parser.add_argument("--o", help="Output path to save the comparison report")
 
     args = parser_cli.parse_args()
+    token = None
 
     if args.command == 'analyze':
         ui.section("🔍 Analyze JWT")
@@ -79,41 +80,39 @@ def main():
             analyze_all_from_file(args.file, pubkey=args.pubkey, audit_flag=args.audit)
             return
 
-        token = None
-        if hasattr(args, 'token'):
-            token = args.token  
+        token = getattr(args, 'token', None)
 
-    # 🔍 If no token is provided, try extracting from file
-    if not token and getattr(args, 'file', None):
-        token = extractor.extract_from_file(args.file)
+        # 🔍 If no token is provided, try extracting from file
+        if not token and getattr(args, 'file', None):
+            token = extractor.extract_from_file(args.file)
+            if not token:
+                print("[!] No valid JWT found in file.")
+                return
+            else:
+                print(f"[+] Extracted JWT:\n{token}\n")
+
         if not token:
-            print("[!] No valid JWT found in file.")
+            print("[!] Please provide a JWT token using --token or extract it using --file.")
             return
-        else:
-            print(f"[+] Extracted JWT:\n{token}\n")
 
-    if not token:
-        print("[!] Please provide a JWT token using --token or extract it using --file.")
-        return
+        # 🧠 Proceed to analyze the token
+        header, payload, signature = parser.decode_jwt(token)
 
-    # 🧠 Proceed to analyze the token
-    header, payload, signature = parser.decode_jwt(token)
+        if not header or not payload:
+            print("[!] Could not decode JWT. Check if the format is valid.")
+            return
 
-    if not header or not payload:
-        print("[!] Could not decode JWT. Check if the format is valid.")
-        return
+        ui.section("Decoded JWT")
+        parser.pretty_print_jwt(header, payload, signature)
 
-    ui.section("Decoded JWT")
-    parser.pretty_print_jwt(header, payload, signature)
+        ui.section("Static Analysis")
+        static_analysis.run_all_checks(header, payload)
 
-    ui.section("Static Analysis")
-    static_analysis.run_all_checks(header, payload)
+        if args.pubkey:
+            validator.verify_signature_rs256(token, args.pubkey)
 
-    if args.pubkey:
-        validator.verify_signature_rs256(token, args.pubkey)
-
-    if args.audit:
-        audit.audit_claims(payload)
+        if args.audit:
+            audit.audit_claims(payload)
 
 
     elif args.command == 'brute-force':
@@ -156,4 +155,10 @@ def main():
         parser_cli.print_help()
 
 if __name__ == '__main__':
-    main()
+    import sys
+    if len(sys.argv) == 1:
+        # Show full CLI help if no args passed
+        main(['--help'])
+    else:
+        main()
+

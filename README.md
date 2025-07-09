@@ -117,17 +117,6 @@ python3 jwtek.py exploit --vuln alg-swap-rs256
 # List all exploit IDs
 python3 jwtek.py exploit --list
 ```
-
----
-
-## 🧪 Running Tests
-
-Install the dependencies listed in `requirements.txt` and ensure `pytest` is installed. Then run:
-
-```bash
-pytest
-```
-
 ---
 
 ## 🧠 Author

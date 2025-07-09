@@ -74,15 +74,15 @@ def main():
 
     if args.command == 'analyze':
         ui.section("🔍 Analyze JWT")
-    # 🔁 If --analyze-all is used, analyze all JWTs from file
-        if getattr(args, 'analyze_all', False) and args.file:
+
+        if getattr(args, 'analyze_all', False) and getattr(args, 'file', None):
             analyze_all_from_file(args.file, pubkey=args.pubkey, audit_flag=args.audit)
             return
 
-    token = getattr(args, 'token', None)
+        token = getattr(args, 'token', None)
 
     # 🔍 If no token is provided, try extracting from file
-    if not token and args.file:
+    if not token and getattr(args, 'file', None):
         token = extractor.extract_from_file(args.file)
         if not token:
             print("[!] No valid JWT found in file.")
@@ -112,6 +112,7 @@ def main():
 
     if args.audit:
         audit.audit_claims(payload)
+
 
     elif args.command == 'brute-force':
         ui.section("🔓 Brute-force JWT Secret")

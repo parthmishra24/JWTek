@@ -79,7 +79,9 @@ def main():
             analyze_all_from_file(args.file, pubkey=args.pubkey, audit_flag=args.audit)
             return
 
-        token = getattr(args, 'token', None)
+        token = None
+        if hasattr(args, 'token'):
+            token = args.token  
 
     # 🔍 If no token is provided, try extracting from file
     if not token and getattr(args, 'file', None):

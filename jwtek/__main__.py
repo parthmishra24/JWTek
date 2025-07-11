@@ -1,5 +1,5 @@
 import argparse
-from jwtek.core import parser, static_analysis, brute_forcer, exploits, validator, forge, audit, smuggle, extractor, ui
+from jwtek.core import parser, static_analysis, brute_forcer, exploits, validator, forge, audit, extractor, ui
 
 def analyze_all_from_file(file_path, pubkey=None, audit_flag=False):
     tokens = extractor.extract_all_jwts_from_file(file_path)
@@ -25,6 +25,29 @@ def analyze_all_from_file(file_path, pubkey=None, audit_flag=False):
 
         if audit_flag:
             audit.audit_claims(payload)
+
+    if len(tokens) > 1:
+        print("\n[+] Showing diffs between sequential tokens...\n")
+        for i in range(len(tokens) - 1):
+            print(f"\n=== Diff: token #{i+1} vs token #{i+2} ===")
+            h1, p1, s1 = parser.decode_jwt(tokens[i])
+            h2, p2, s2 = parser.decode_jwt(tokens[i+1])
+
+            print("--- Header ---")
+            for key in sorted(set(h1) | set(h2)):
+                if h1.get(key) != h2.get(key):
+                    print(f"{key}: '{h1.get(key)}' -> '{h2.get(key)}'")
+
+            print("--- Payload ---")
+            for key in sorted(set(p1) | set(p2)):
+                if p1.get(key) != p2.get(key):
+                    print(f"{key}: '{p1.get(key)}' -> '{p2.get(key)}'")
+
+            print("--- Signature ---")
+            if s1 != s2:
+                print("Signature changed")
+            else:
+                print("Signature unchanged")
 
 def main(argv=None):
     parser_cli = argparse.ArgumentParser(
@@ -64,11 +87,6 @@ def main(argv=None):
     forge_parser.add_argument('--pubkey', help='Path to RSA public key (for RS256)')
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256)')
 
-    # === smuggle ===
-    smuggle_parser = subparsers.add_parser('smuggle', help='Compare two JWTs for tampering or smuggling')
-    smuggle_parser.add_argument('--token1', required=True, help='Original JWT')
-    smuggle_parser.add_argument('--token2', required=True, help='Potentially tampered JWT')
-    smuggle_parser.add_argument("--o", help="Output path to save the comparison report")
 
     args = parser_cli.parse_args()
     token = None
@@ -76,7 +94,11 @@ def main(argv=None):
     if args.command == 'analyze':
 
         if getattr(args, 'analyze_all', False) and getattr(args, 'file', None):
-            analyze_all_from_file(args.file, pubkey=args.pubkey, audit_flag=args.audit)
+            analyze_all_from_file(
+                args.file,
+                pubkey=args.pubkey,
+                audit_flag=args.audit,
+            )
             return
 
         token = getattr(args, 'token', None)
@@ -143,9 +165,6 @@ def main(argv=None):
             secret=args.secret,
             privkey_path=args.privkey
         )
-
-    elif args.command == 'smuggle':
-        smuggle.smuggle_compare(args.token1, args.token2, args.o)
 
     else:
         parser_cli.print_help()

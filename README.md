@@ -33,9 +33,6 @@ different ways:
 ### 4. `forge`
 - Create custom tokens using `none`, `HS256`, or `RS256`
 
-### 5. `smuggle`
-- Compare two JWTs to spot tampering or smuggling attempts
-
 ---
 
 ## Installation
@@ -63,7 +60,6 @@ different ways:
 - Extracts tokens from files and supports batch analysis
 - Forge custom tokens using `none`, `HS256`, or `RS256`
 - Guided exploitation advice with PoCs and bypass testing
-- Compare tokens to uncover tampering or smuggling attempts
 - Extendable and modular structure
 
 ---
@@ -75,6 +71,9 @@ python3 jwtek.py <command> [options]
 ```
 
 ### 🔍 Analyze a JWT
+
+Use `--analyze-all` to extract and analyze every JWT from a file. Differences
+between sequential tokens are displayed automatically at the end of the output.
 
 ```bash
 python3 jwtek.py analyze --token <JWT>
@@ -117,12 +116,6 @@ python3 jwtek.py exploit --list
 python3 jwtek.py forge --alg HS256 --payload '{"admin": true}' --secret secret
 ```
 
-### 🔎 Compare JWTs
-
-```bash
-python3 jwtek.py smuggle --token1 original.jwt --token2 modified.jwt
-```
----
 
 ## 🧠 Author
 

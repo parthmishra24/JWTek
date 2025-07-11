@@ -74,7 +74,6 @@ def main(argv=None):
     token = None
 
     if args.command == 'analyze':
-        ui.section("🔍 Analyze JWT")
 
         if getattr(args, 'analyze_all', False) and getattr(args, 'file', None):
             analyze_all_from_file(args.file, pubkey=args.pubkey, audit_flag=args.audit)
@@ -116,7 +115,6 @@ def main(argv=None):
 
 
     elif args.command == 'brute-force':
-        ui.section("🔓 Brute-force JWT Secret")
         token = args.token
         wordlist = args.wordlist
         brute_forcer.brute_force_hs256(token, wordlist)
@@ -139,7 +137,6 @@ def main(argv=None):
             print("[!] Use --vuln to specify a vulnerability ID or --list to see options.")
 
     elif args.command == 'forge':
-        ui.section("🛠️ Forge Custom JWT")
         forge.forge_jwt(
             alg=args.alg,
             payload_str=args.payload,
@@ -148,7 +145,6 @@ def main(argv=None):
         )
 
     elif args.command == 'smuggle':
-        ui.section("🕵️ JWT Smuggling Detection")
         smuggle.smuggle_compare(args.token1, args.token2, args.o)
 
     else:

@@ -14,38 +14,27 @@ JWTs are widely used for **authentication and authorization**, but they’re oft
 
 ## ⚙️ How JWTEK Works
 
-JWTEK operates in multiple **modes** to support both black-box and gray-box analysis:
+JWTEK is organised into several subcommands so you can analyse tokens in
+different ways:
 
-### 1. Static Analysis
-- Input: Just a JWT (no key needed)
-- JWTEK decodes the token and checks for:
-  - `alg: none` misconfigurations
-  - Use of weak algorithms (like HS256)
-  - Missing or expired claims (`exp`, `iat`, `nbf`)
-  - RS256 → HS256 downgrade potential
+### 1. `analyze`
+- Decode a token and run static checks
+- Optional `--pubkey` to verify RS256 signatures
+- `--audit` highlights suspicious privilege claims
+- Tokens can also be extracted from files with `--file` or analysed in batch
+  using `--analyze-all`
 
-### 2. Brute-Force Mode (HS256)
-- Input: JWT signed with HS256 + a wordlist
-- JWTEK tries each secret in the wordlist to **guess the HMAC key**
-- If successful:
-  - Reveals the secret
-  - Enables token forgery
-  - Provides exploit guidance
+### 2. `brute-force`
+- Discover the secret for HS256 tokens using a wordlist
 
-### 3. Signature Verification (RS256)
-- Input: JWT + public key file
-- JWTEK verifies if the token’s signature is valid
-- Helps confirm token integrity and detect tampering
+### 3. `exploit`
+- Get exploitation tips, generate PoC tokens, or attempt auth bypass testing
 
-### 4. Exploit Guidance
-- Run:
-  ```bash
-  jwtek.py exploit --vuln <id>
-  ```
-- JWTEK shows:
-  - Why the issue is dangerous
-  - How to exploit it manually
-  - Python PoC examples
+### 4. `forge`
+- Create custom tokens using `none`, `HS256`, or `RS256`
+
+### 5. `smuggle`
+- Compare two JWTs to spot tampering or smuggling attempts
 
 ---
 
@@ -66,13 +55,16 @@ JWTEK operates in multiple **modes** to support both black-box and gray-box anal
 
 ## 🚀 Features
 
-- ✅ Static analysis of JWTs
-- ✅ Detects `alg: none`, weak algorithms, missing claims, expired tokens
-- ✅ Brute-force HS256 tokens using custom or preset wordlists
-- ✅ RS256 to HS256 downgrade vulnerability detection
-- ✅ Signature verification using RS256 public keys
-- ✅ Guided exploitation advice with real PoCs
-- ✅ Extendable and modular structure
+- Static analysis of JWTs with optional RS256 signature verification
+- Detects `alg: none`, weak algorithms, missing or expired claims
+- Audits claims for potential privilege escalation
+- Brute-forces HS256 secrets using custom or preset wordlists
+- RS256 → HS256 downgrade detection
+- Extracts tokens from files and supports batch analysis
+- Forge custom tokens using `none`, `HS256`, or `RS256`
+- Guided exploitation advice with PoCs and bypass testing
+- Compare tokens to uncover tampering or smuggling attempts
+- Extendable and modular structure
 
 ---
 
@@ -86,7 +78,8 @@ python3 jwtek.py <command> [options]
 
 ```bash
 python3 jwtek.py analyze --token <JWT>
-python3 jwtek.py analyze --token <JWT> --pubkey ./public.pem
+python3 jwtek.py analyze --token <JWT> --pubkey ./public.pem --audit
+python3 jwtek.py analyze --file ./tokens.txt --analyze-all
 ```
 
 ### 🔐 Brute-force HS256
@@ -116,6 +109,18 @@ python3 jwtek.py exploit --vuln alg-swap-rs256
 ```bash
 # List all exploit IDs
 python3 jwtek.py exploit --list
+```
+
+### ✨ Forge a JWT
+
+```bash
+python3 jwtek.py forge --alg HS256 --payload '{"admin": true}' --secret secret
+```
+
+### 🔎 Compare JWTs
+
+```bash
+python3 jwtek.py smuggle --token1 original.jwt --token2 modified.jwt
 ```
 ---
 

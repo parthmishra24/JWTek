@@ -1,5 +1,8 @@
+from . import ui
+
+
 def audit_claims(payload, custom_rules=None):
-    print("\n[🔍] Running claim audit...")
+    ui.info("\n[🔍] Running claim audit...")
 
     suspicious_keys = {
         "admin": (lambda v: v in [True, "true", 1, "1", "yes"], "high"),
@@ -20,10 +23,10 @@ def audit_claims(payload, custom_rules=None):
         check = data[0] if isinstance(data, tuple) else data
         severity = data[1] if isinstance(data, tuple) else "info"
         if key in payload and check(payload[key]):
-            print(f"[!] Suspicious claim: `{key}` = {payload[key]} (severity: {severity})")
+            ui.warn(f"Suspicious claim: `{key}` = {payload[key]} (severity: {severity})")
             flagged = True
 
     if not flagged:
-        print("[+] No suspicious claims found.")
+        ui.success("No suspicious claims found.")
     else:
-        print("[!] Review the above claims for potential privilege escalation.")
+        ui.warn("Review the above claims for potential privilege escalation.")

@@ -1,5 +1,6 @@
 import base64
 import json
+from . import ui
 
 def _b64_decode(data):
     padding = '=' * (-len(data) % 4)
@@ -12,7 +13,7 @@ def decode_jwt(token):
         payload = json.loads(_b64_decode(payload_b64))
         return header, payload, signature_b64
     except Exception as e:
-        print(f"[!] Failed to decode JWT: {e}")
+        ui.error(f"Failed to decode JWT: {e}")
         return {}, {}, ''
 
 def pretty_print_jwt(header, payload, signature_b64):

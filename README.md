@@ -61,6 +61,7 @@ different ways:
 - Forge custom tokens using `none`, `HS256`, or `RS256`
 - Guided exploitation advice with PoCs and bypass testing
 - Extendable and modular structure
+- Colored console output for readability (disable with `--no-color` or `JWTEK_NO_COLOR=1`)
 
 ---
 
@@ -69,6 +70,7 @@ different ways:
 ```bash
 python3 jwtek.py <command> [options]
 ```
+Use `--no-color` or set `JWTEK_NO_COLOR=1` to disable ANSI colours.
 
 ### 🔍 Analyze a JWT
 

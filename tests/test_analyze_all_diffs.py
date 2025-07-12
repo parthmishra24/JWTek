@@ -19,6 +19,14 @@ sys.modules.setdefault("requests", type("Dummy", (), {})())
 sys.modules.setdefault("tqdm", type("Dummy", (), {"tqdm": lambda x, *a, **k: x})())
 sys.modules.setdefault("termcolor", type("Dummy", (), {"cprint": lambda *a, **k: None})())
 
+# Stub UI helpers to avoid colour output during tests
+import jwtek.core.ui as ui
+ui.info = lambda *a, **k: None
+ui.success = lambda *a, **k: None
+ui.warn = lambda *a, **k: None
+ui.error = lambda *a, **k: None
+ui.section = lambda *a, **k: None
+
 from jwtek.__main__ import analyze_all_from_file
 
 

@@ -1,12 +1,13 @@
 import base64
 import json
 import jwt
+from . import ui
 
 def forge_jwt(alg, payload_str, secret=None, privkey_path=None, kid=None):
     try:
         payload = json.loads(payload_str)
     except json.JSONDecodeError:
-        print("[!] Invalid payload format. Must be valid JSON.")
+        ui.error("Invalid payload format. Must be valid JSON.")
         return
 
     header = {"alg": alg, "typ": "JWT"}
@@ -17,33 +18,33 @@ def forge_jwt(alg, payload_str, secret=None, privkey_path=None, kid=None):
         header_b64 = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip("=")
         payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip("=")
         forged_token = f"{header_b64}.{payload_b64}."
-        print("\n[+] Forged JWT (alg=none):")
+        ui.success("\n[+] Forged JWT (alg=none):")
         print(forged_token)
         return
 
     elif alg == "HS256":
         if not secret:
-            print("[!] HS256 requires --secret to sign the token.")
+            ui.error("HS256 requires --secret to sign the token.")
             return
         token = jwt.encode(payload, secret, algorithm="HS256", headers=header)
-        print("\n[+] Forged JWT (HS256):")
+        ui.success("\n[+] Forged JWT (HS256):")
         print(token)
         return
 
     elif alg in {"RS256", "ES256", "PS256"}:
         if not privkey_path:
-            print("[!] {} requires --privkey path to sign the token.".format(alg))
+            ui.error("{} requires --privkey path to sign the token.".format(alg))
             return
         try:
             with open(privkey_path, "r") as f:
                 private_key = f.read()
         except Exception as e:
-            print(f"[!] Failed to read private key: {e}")
+            ui.error(f"Failed to read private key: {e}")
             return
         token = jwt.encode(payload, private_key, algorithm=alg, headers=header)
-        print(f"\n[+] Forged JWT ({alg}):")
+        ui.success(f"\n[+] Forged JWT ({alg}):")
         print(token)
         return
 
     else:
-        print(f"[!] Unsupported algorithm: {alg}")
+        ui.error(f"Unsupported algorithm: {alg}")

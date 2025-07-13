@@ -11,7 +11,7 @@ def extract_from_file(path):
         with open(path, "r") as f:
             content = f.read()
         return extract_jwt_from_text(content)
-    except:
+    except FileNotFoundError:
         return None
     
 def extract_all_jwts_from_file(file_path):

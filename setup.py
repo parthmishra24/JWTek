@@ -11,6 +11,7 @@ setup(
         'tqdm',
         'requests',
         'termcolor',
+        'tabulate',
         # add others as needed
     ],
     entry_points={

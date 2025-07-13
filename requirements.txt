@@ -2,3 +2,4 @@ pyjwt
 tqdm
 termcolor
 requests
+tabulate

@@ -1,5 +1,4 @@
 import jwt
-import requests
 from . import ui
 
 def verify_signature_rs256(token, public_key_path):

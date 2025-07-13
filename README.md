@@ -76,14 +76,12 @@ Use `--no-color` or set `JWTEK_NO_COLOR=1` to disable ANSI colours.
 
 Use `--analyze-all` to extract and analyze every JWT from a file. Differences
 between sequential tokens are displayed automatically at the end of the output.
-Add the `--table` flag to also print a table summarising decoded claims.
 
 ```bash
 python3 jwtek.py analyze --token <JWT>
 python3 jwtek.py analyze --token <JWT> --pubkey ./public.pem --audit
 python3 jwtek.py analyze --token <JWT> --jwks <JWKS_URL>
 python3 jwtek.py analyze --file ./tokens.txt --analyze-all
-python3 jwtek.py analyze --file ./tokens.txt --analyze-all --table
 ```
 
 ### 🔐 Brute-force HS256

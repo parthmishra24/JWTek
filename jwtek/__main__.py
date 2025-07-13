@@ -11,7 +11,7 @@ from jwtek.core import (
     ui,
 )
 
-def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=False, output_json=None, table_flag=False):
+def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=False, output_json=None):
     tokens = extractor.extract_all_jwts_from_file(file_path)
     if not tokens:
         print("[!] No JWTs found in file.")
@@ -72,10 +72,6 @@ def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=Fals
             json.dump(results, f, indent=2)
         print(f"\n[+] Results written to {output_json}")
 
-    if table_flag:
-        flattened = [{**r.get("header", {}), **r.get("payload", {})} for r in results]
-        ui.print_table(flattened)
-
 def main(argv=None):
     parser_cli = argparse.ArgumentParser(
         prog='jwtek',
@@ -94,7 +90,6 @@ def main(argv=None):
     analyze_parser.add_argument('--file', help='Path to file to extract JWT from')
     analyze_parser.add_argument('--analyze-all', action='store_true', help='Extract and analyze all JWTs from file')
     analyze_parser.add_argument('--json-out', help='Write analysis results to JSON file')
-    analyze_parser.add_argument('--table', action='store_true', help='Display results in table format when using --analyze-all')
 
     # === brute-force ===
     brute_parser = subparsers.add_parser('brute-force', help='Brute-force JWT secret for HS256')
@@ -136,7 +131,6 @@ def main(argv=None):
                 jwks_url=args.jwks,
                 audit_flag=args.audit,
                 output_json=args.json_out,
-                table_flag=args.table,
             )
             return
 

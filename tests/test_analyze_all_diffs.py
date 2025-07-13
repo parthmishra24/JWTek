@@ -49,20 +49,3 @@ def test_analyze_all_prints_diffs(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "Diff: token #1 vs token #2" in out
     assert "id: '1' -> '2'" in out
-
-
-def test_analyze_all_table_output(tmp_path, capsys):
-    token1 = forge_token({"id": 1})
-    path = tmp_path / "t.txt"
-    path.write_text(f"{token1}\n")
-
-    # stub tabulate to produce predictable output
-    sys.modules.setdefault(
-        "tabulate",
-        type("Dummy", (), {"tabulate": lambda *a, **k: "TABLE"})(),
-    )
-
-    analyze_all_from_file(str(path), table_flag=True)
-
-    out = capsys.readouterr().out
-    assert "TABLE" in out

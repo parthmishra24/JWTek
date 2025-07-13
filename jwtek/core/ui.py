@@ -50,20 +50,3 @@ def warn(msg: str) -> None:
 def error(msg: str) -> None:
     """Display an error message."""
     _cprint(msg, "red")
-
-
-def print_table(rows):
-    """Pretty print a list of dictionaries using :mod:`tabulate`."""
-    if not rows:
-        print("(no data)")
-        return
-    try:
-        from tabulate import tabulate
-    except Exception:
-        for row in rows:
-            print(row)
-        return
-
-    headers = sorted({key for row in rows for key in row})
-    table = [[row.get(h, "") for h in headers] for row in rows]
-    print(tabulate(table, headers=headers, tablefmt="github"))

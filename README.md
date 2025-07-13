@@ -80,6 +80,7 @@ between sequential tokens are displayed automatically at the end of the output.
 ```bash
 python3 jwtek.py analyze --token <JWT>
 python3 jwtek.py analyze --token <JWT> --pubkey ./public.pem --audit
+python3 jwtek.py analyze --token <JWT> --jwks <JWKS_URL>
 python3 jwtek.py analyze --file ./tokens.txt --analyze-all
 ```
 

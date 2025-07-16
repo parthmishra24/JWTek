@@ -134,7 +134,6 @@ jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 ```bash
 jwtek update
 ```
-Fetches the latest version directly from GitHub using your current Python's `pip`.
 
 
 ## 🧠 Author

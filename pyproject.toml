@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jwtek"
+version = "1.0.0"
+description = "JWT Security Analysis & Exploitation Tool"
+readme = "README.md"
+requires-python = ">=3.6"
+authors = [{name = "Parth"}]
+dependencies = [
+    "pyjwt",
+    "tqdm",
+    "requests",
+    "termcolor",
+]
+
+[project.scripts]
+jwtek = "jwtek.__main__:main"

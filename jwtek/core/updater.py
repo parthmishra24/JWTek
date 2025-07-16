@@ -4,7 +4,6 @@ from . import ui
 
 def update_tool(repo_url="https://github.com/parthmishra24/JWTek.git", branch="main"):
     """Update JWTEK from the specified Git repository."""
-    cmd = ["pip", "install", "--upgrade", f"git+{repo_url}@{branch}"]
     ui.info(f"[~] Updating JWTEK from {repo_url}@{branch}...")
     try:
         subprocess.check_call(cmd)

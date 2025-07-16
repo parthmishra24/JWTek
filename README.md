@@ -65,6 +65,7 @@ different ways:
 - Guided exploitation advice with PoCs and bypass testing
 - Extendable and modular structure
 - Colored console output for readability (disable with `--no-color` or `JWTEK_NO_COLOR=1`)
+- Built-in command to update JWTEK from GitHub
 
 ---
 

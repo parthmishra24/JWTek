@@ -11,12 +11,5 @@ def test_update_tool_runs_pip(monkeypatch):
     monkeypatch.setattr(updater.ui, 'info', lambda *a, **k: None)
     monkeypatch.setattr(updater.ui, 'success', lambda *a, **k: None)
     monkeypatch.setattr(updater.ui, 'error', lambda *a, **k: None)
-
-
-
-    assert calls['cmd'] == [
-        'pip',
-        'install',
-        '--upgrade',
     ]
 

@@ -48,6 +48,16 @@ different ways:
    ```
    pip3 install -e .
    ```
+
+### Install with `pipx`
+You can also install JWTEK globally using [pipx](https://pypa.github.io/pipx/),
+which keeps the tool isolated from your other Python packages.
+
+```bash
+pipx install git+https://github.com/parthmishra24/JWTek.git
+# or, if published on PyPI
+pipx install jwtek
+```
 ---
 
 ## 🚀 Features

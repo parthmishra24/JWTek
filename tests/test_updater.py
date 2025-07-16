@@ -15,6 +15,7 @@ def test_update_tool_runs_pip(monkeypatch):
     updater.update_tool(repo_url='https://github.com/example/repo.git', branch='dev')
     assert calls['cmd'] == [
         'python3', '-m', 'pip', 'install', '--upgrade',
+        '--break-system-packages',
         'git+https://github.com/example/repo.git@dev'
     ]
 

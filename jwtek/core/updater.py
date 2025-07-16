@@ -11,6 +11,7 @@ def update_tool(repo_url: str = "https://github.com/parthmishra24/JWTek.git", br
         "pip",
         "install",
         "--upgrade",
+        "--break-system-packages",
         f"git+{repo_url}@{branch}",
     ]
     try:

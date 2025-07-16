@@ -110,6 +110,11 @@ of a file path. JWTEK expects these wordlists at the following locations:
 If a preset wordlist isn't found at its location, JWTEK will display an error
 and you can supply your own wordlist path with `--wordlist`.
 
+The base directory for these presets can also be changed by setting the
+`JWTEK_WORDLIST_DIR` environment variable. On Linux this usually points to
+`/usr/share/wordlists` or a similar folder. macOS and Windows users may set the
+variable to their own wordlist directory.
+
 ### 💣 Exploitation Guidance
 
 ```bash

@@ -46,7 +46,7 @@ different ways:
    ```
 3. Run the pip command
    ```
-   pip3 install -e .
+   python -m pip install -e .
    ```
 ---
 
@@ -68,8 +68,9 @@ different ways:
 ## 🧰 Usage
 
 ```bash
-python3 jwtek.py <command> [options]
+jwtek <command> [options]
 ```
+The `jwtek` command becomes available after installation.
 Use `--no-color` or set `JWTEK_NO_COLOR=1` to disable ANSI colours.
 
 ### 🔍 Analyze a JWT
@@ -78,16 +79,16 @@ Use `--analyze-all` to extract and analyze every JWT from a file. Differences
 between sequential tokens are displayed automatically at the end of the output.
 
 ```bash
-python3 jwtek.py analyze --token <JWT>
-python3 jwtek.py analyze --token <JWT> --pubkey ./public.pem --audit
-python3 jwtek.py analyze --token <JWT> --jwks <JWKS_URL>
-python3 jwtek.py analyze --file ./tokens.txt --analyze-all
+jwtek analyze --token <JWT>
+jwtek analyze --token <JWT> --pubkey ./public.pem --audit
+jwtek analyze --token <JWT> --jwks <JWKS_URL>
+jwtek analyze --file ./tokens.txt --analyze-all
 ```
 
 ### 🔐 Brute-force HS256
 
 ```bash
-python3 jwtek.py brute-force --token <JWT> --wordlist testlist.txt
+jwtek brute-force --token <JWT> --wordlist testlist.txt
 ```
 
 Preset names such as `rockyou`, `jwt-secrets`, and `top10` can be used in place
@@ -103,20 +104,20 @@ and you can supply your own wordlist path with `--wordlist`.
 ### 💣 Exploitation Guidance
 
 ```bash
-python3 jwtek.py exploit --vuln alg-none
-python3 jwtek.py exploit --vuln hs256-key-found --secret secret123
-python3 jwtek.py exploit --vuln alg-swap-rs256
+jwtek exploit --vuln alg-none
+jwtek exploit --vuln hs256-key-found --secret secret123
+jwtek exploit --vuln alg-swap-rs256
 ```
 
 ```bash
 # List all exploit IDs
-python3 jwtek.py exploit --list
+jwtek exploit --list
 ```
 
 ### ✨ Forge a JWT
 
 ```bash
-python3 jwtek.py forge --alg HS256 --payload '{"admin": true}' --secret secret
+jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 ```
 
 

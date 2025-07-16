@@ -33,6 +33,9 @@ different ways:
 ### 4. `forge`
 - Create custom tokens using `none`, `HS256`, or `RS256`
 
+### 5. `update`
+- Upgrade JWTEK to the latest version from GitHub
+
 ---
 
 ## Installation
@@ -123,6 +126,12 @@ jwtek exploit --list
 
 ```bash
 jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
+```
+
+### ⬆️ Update JWTEK
+
+```bash
+jwtek update
 ```
 
 

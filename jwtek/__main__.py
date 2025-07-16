@@ -119,8 +119,6 @@ def main(argv=None):
 
     # === update ===
     update_parser = subparsers.add_parser('update', help='Update JWTEK from GitHub')
-    update_parser.add_argument('--repo', default='https://github.com/parthmishra24/JWTek.git', help='Git repository URL')
-    update_parser.add_argument('--branch', default='main', help='Branch or tag to install')
 
 
     args = parser_cli.parse_args()
@@ -215,7 +213,6 @@ def main(argv=None):
         )
 
     elif args.command == 'update':
-        updater.update_tool(repo_url=args.repo, branch=args.branch)
 
     else:
         parser_cli.print_help()

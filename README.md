@@ -48,6 +48,14 @@ different ways:
    ```
    pip3 install -e .
    ```
+4. Build a wheel using [build](https://pypi.org/project/build/)
+   ```
+   python -m build
+   ```
+5. Install the generated wheel
+   ```
+   pip install dist/jwtek-<version>-py3-none-any.whl
+   ```
 ---
 
 ## 🚀 Features

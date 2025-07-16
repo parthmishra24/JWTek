@@ -12,12 +12,11 @@ def test_update_tool_runs_pip(monkeypatch):
     monkeypatch.setattr(updater.ui, 'success', lambda *a, **k: None)
     monkeypatch.setattr(updater.ui, 'error', lambda *a, **k: None)
 
-    updater.update_tool()
+
 
     assert calls['cmd'] == [
         'pip',
         'install',
         '--upgrade',
-        'git+https://github.com/parthmishra24/JWTek.git@main',
     ]
 

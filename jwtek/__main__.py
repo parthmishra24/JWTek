@@ -213,7 +213,6 @@ def main(argv=None):
         )
 
     elif args.command == 'update':
-        updater.update_tool()
 
     else:
         parser_cli.print_help()

@@ -6,6 +6,7 @@ from jwtek.core import (
     exploits,
     validator,
     forge,
+    updater,
     audit,
     extractor,
     ui,
@@ -116,6 +117,9 @@ def main(argv=None):
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
     forge_parser.add_argument('--kid', help='Optional kid header value')
 
+    # === update ===
+    update_parser = subparsers.add_parser('update', help='Update JWTEK from GitHub')
+
 
     args = parser_cli.parse_args()
     if getattr(args, 'no_color', False):
@@ -207,6 +211,9 @@ def main(argv=None):
             privkey_path=args.privkey,
             kid=args.kid,
         )
+
+    elif args.command == 'update':
+        updater.update_tool()
 
     else:
         parser_cli.print_help()

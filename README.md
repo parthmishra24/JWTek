@@ -33,6 +33,9 @@ different ways:
 ### 4. `forge`
 - Create custom tokens using `none`, `HS256`, or `RS256`
 
+### 5. `update`
+- Upgrade JWTEK to the latest version from GitHub
+
 ---
 
 ## Installation
@@ -62,6 +65,7 @@ different ways:
 - Guided exploitation advice with PoCs and bypass testing
 - Extendable and modular structure
 - Colored console output for readability (disable with `--no-color` or `JWTEK_NO_COLOR=1`)
+- Built-in command to update JWTEK from GitHub
 
 ---
 
@@ -124,6 +128,13 @@ jwtek exploit --list
 ```bash
 jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 ```
+
+### ⬆️ Update JWTEK
+
+```bash
+jwtek update
+```
+Fetches the latest version directly from GitHub using your current Python's `pip`.
 
 
 ## 🧠 Author

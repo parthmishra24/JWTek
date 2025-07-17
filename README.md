@@ -47,9 +47,9 @@ different ways:
    ```
    cd JWTek
    ```
-3. Run the pip command
-   ```
-   python -m pip install -e .
+3. Install using Go
+   ```bash
+   go install github.com/parthmishra24/JWTek@latest
    ```
 ---
 

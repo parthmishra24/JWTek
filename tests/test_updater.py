@@ -1,7 +1,7 @@
 import jwtek.core.updater as updater
 
 
-def test_update_tool_runs_pip(monkeypatch):
+def test_update_tool_runs_go(monkeypatch):
     calls = {}
 
     def fake_check_call(cmd):
@@ -12,10 +12,8 @@ def test_update_tool_runs_pip(monkeypatch):
     monkeypatch.setattr(updater.ui, 'success', lambda *a, **k: None)
     monkeypatch.setattr(updater.ui, 'error', lambda *a, **k: None)
 
-    updater.update_tool(repo_url='https://github.com/example/repo.git', branch='dev')
+    updater.update_tool(repo_url='github.com/example/repo', version='dev')
     assert calls['cmd'] == [
-        'python3', '-m', 'pip', 'install', '--upgrade',
-        '--break-system-packages',
-        'git+https://github.com/example/repo.git@dev'
+        'go', 'install', 'github.com/example/repo@dev'
     ]
 

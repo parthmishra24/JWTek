@@ -13,7 +13,7 @@ from jwtek.core import (
     ui,
 )
 
-def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=False, output_json=None):
+def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, secret=None, audit_flag=False, output_json=None):
     tokens = extractor.extract_all_jwts_from_file(file_path)
     if not tokens:
         print("[!] No JWTs found in file.")
@@ -39,6 +39,9 @@ def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=Fals
 
         if jwks_url:
             validator.verify_signature_jwks(token, jwks_url)
+
+        if secret:
+            validator.verify_signature_hmac(token, secret)
 
         if audit_flag:
             audit.audit_claims(payload)
@@ -199,6 +202,7 @@ def main(argv=None):
     analyze_parser.add_argument('--token', required=False, help='JWT string to analyze')
     analyze_parser.add_argument('--pubkey', help='Optional path to public key (PEM) for signature verification')
     analyze_parser.add_argument('--jwks', help='URL to JWKS for signature verification')
+    analyze_parser.add_argument('--secret', help='Shared secret for HS256/384/512 verification')
     analyze_parser.add_argument('--audit', action='store_true', help='Audit JWT claims for privilege abuse')
     analyze_parser.add_argument('--file', help='Path to file to extract JWT from')
     analyze_parser.add_argument('--analyze-all', action='store_true', help='Extract and analyze all JWTs from file')
@@ -244,6 +248,7 @@ def main(argv=None):
                 args.file,
                 pubkey=args.pubkey,
                 jwks_url=args.jwks,
+                secret=args.secret,
                 audit_flag=args.audit,
                 output_json=args.json_out,
             )
@@ -282,6 +287,9 @@ def main(argv=None):
 
         if args.jwks:
             validator.verify_signature_jwks(token, args.jwks)
+
+        if args.secret:
+            validator.verify_signature_hmac(token, args.secret)
 
         if args.audit:
             audit.audit_claims(payload)

@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 from jwtek.core import (
     parser,
     static_analysis,
@@ -71,6 +72,59 @@ def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=Fals
             json.dump(results, f, indent=2)
         print(f"\n[+] Results written to {output_json}")
 
+
+def update_jwtek():
+    """Update JWTEK by pulling the latest changes from Git."""
+    install_cmd = (
+        "git clone <repo-url> && cd jwtek && "
+        "python3 -m pip install -e . --break-system-packages"
+    )
+
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        if result.stdout.strip() != "true":
+            raise subprocess.CalledProcessError(1, "rev-parse")
+    except FileNotFoundError:
+        print("[!] Cannot update. JWTEK was not installed via Git. Please reinstall manually using:")
+        print(f"    {install_cmd}")
+        return
+    except subprocess.CalledProcessError:
+        print("[!] Cannot update. JWTEK was not installed via Git. Please reinstall manually using:")
+        print(f"    {install_cmd}")
+        return
+
+    try:
+        status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except subprocess.CalledProcessError:
+        print("[!] Failed to check repository status. Please run 'git status --porcelain' manually.")
+        return
+
+    if status.stdout.strip():
+        print("[!] You have local changes. Please commit/stash them before updating.")
+        return
+
+    try:
+        subprocess.run(["git", "pull", "origin", "main"], check=True)
+        print("[+] JWTEK has been updated successfully.")
+    except subprocess.CalledProcessError as e:
+        print("[!] Failed to update automatically. Please run:")
+        print("    git pull origin main")
+        if e.stderr:
+            err = e.stderr.decode() if isinstance(e.stderr, bytes) else e.stderr
+            err = err.strip()
+            if err:
+                print(f"    Error: {err}")
+
 def main(argv=None):
     parser_cli = argparse.ArgumentParser(
         prog='jwtek',
@@ -108,6 +162,9 @@ def main(argv=None):
     forge_parser.add_argument('--pubkey', help='Path to RSA public key (for RS256)')
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
     forge_parser.add_argument('--kid', help='Optional kid header value')
+
+    # === update ===
+    subparsers.add_parser('update', help='Update JWTEK to the latest version')
 
 
     args = parser_cli.parse_args()
@@ -195,6 +252,9 @@ def main(argv=None):
             privkey_path=args.privkey,
             kid=args.kid,
         )
+
+    elif args.command == 'update':
+        update_jwtek()
 
     else:
         parser_cli.print_help()

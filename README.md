@@ -108,15 +108,8 @@ jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 ### ⬆️ Update JWTEK
 
 ```bash
-jwtek update
-```
-
-You can optionally specify a custom repository and branch:
-
-```bash
 jwtek update --repo https://github.com/example/JWTek.git --branch dev
 ```
-
 
 ## 🧠 Author
 

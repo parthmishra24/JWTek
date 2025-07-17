@@ -123,7 +123,6 @@ def main(argv=None):
         help='Repository branch to install',
     )
 
-
     args = parser_cli.parse_args()
     if getattr(args, 'no_color', False):
         ui.set_no_color(True)

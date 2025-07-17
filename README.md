@@ -103,8 +103,11 @@ jwtek exploit --list
 
 ### ✨ Forge a JWT
 
+The `--payload` option accepts a JSON string describing the claims for the token.
+For example:
+
 ```bash
-jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
+jwtek forge --alg HS256 --payload '{"sub":"1234567890","name":"John Doe","admin":true}' --secret secret
 ```
 
 ### 🔄 Update JWTEK

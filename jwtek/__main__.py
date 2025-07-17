@@ -221,7 +221,14 @@ def main(argv=None):
     # === forge ===
     forge_parser = subparsers.add_parser('forge', help="Forge a custom JWT token")
     forge_parser.add_argument('--alg', required=True, help="Algorithm to use (HS256, RS256, ES256, PS256, none)")
-    forge_parser.add_argument('--payload', required=True, help="JSON payload string, e.g. '{"sub":"1234567890","name":"John Doe","admin":true}'")
+    forge_parser.add_argument(
+        '--payload',
+        required=True,
+        help=(
+            "JSON payload string, e.g. '{\"sub\":\"1234567890\","
+            "\"name\":\"John Doe\",\"admin\":true}'"
+        ),
+    )
     forge_parser.add_argument('--secret', help="Secret key for HS256 (optional)")
     forge_parser.add_argument('--pubkey', help='Path to RSA public key (for RS256)')
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')

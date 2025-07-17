@@ -9,6 +9,7 @@ from jwtek.core import (
     forge,
     audit,
     extractor,
+    bruteforce,
     ui,
 )
 
@@ -222,6 +223,11 @@ def main(argv=None):
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
     forge_parser.add_argument('--kid', help='Optional kid header value')
 
+    # === brute ===
+    brute_parser = subparsers.add_parser('brute', help='Brute force HS* secret key')
+    brute_parser.add_argument('--token', required=True, help='JWT token to crack')
+    brute_parser.add_argument('--wordlist', required=True, help='Path to wordlist of secrets')
+
     # === update ===
     subparsers.add_parser('update', help='Update JWTEK to the latest version')
 
@@ -311,6 +317,9 @@ def main(argv=None):
             privkey_path=args.privkey,
             kid=args.kid,
         )
+
+    elif args.command == 'brute':
+        bruteforce.bruteforce_hmac_secret(args.token, args.wordlist)
 
     elif args.command == 'update':
         update_jwtek()

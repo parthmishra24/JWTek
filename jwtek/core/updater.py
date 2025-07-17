@@ -29,8 +29,11 @@ def update_tool(repo_url: str = "https://github.com/parthmishra24/JWTek.git", br
         cmd.append("--break-system-packages")
     cmd.append(f"git+{repo_url}@{branch}")
     try:
-        subprocess.check_call(cmd)
-        ui.success("[+] JWTEK updated successfully.")
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode == 0:
+            ui.success("[+] JWTEK updated successfully.")
+        else:
+            ui.error(f"[!] Failed to update JWTEK: {result.stderr}")
     except Exception as exc:
         ui.error(f"[!] Failed to update JWTEK: {exc}")
 

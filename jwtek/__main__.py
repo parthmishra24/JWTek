@@ -1,5 +1,6 @@
 import argparse
 import subprocess
+from pathlib import Path
 from jwtek.core import (
     parser,
     static_analysis,
@@ -74,11 +75,13 @@ def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, audit_flag=Fals
 
 
 def update_jwtek():
-    """Update JWTEK by pulling the latest changes from Git."""
+    """Update JWTEK by pulling the latest changes from Git and showing changes."""
     install_cmd = (
         "git clone <repo-url> && cd jwtek && "
         "python3 -m pip install -e . --break-system-packages"
     )
+
+    repo_root = Path(__file__).resolve().parent.parent
 
     try:
         result = subprocess.run(
@@ -86,6 +89,7 @@ def update_jwtek():
             capture_output=True,
             text=True,
             check=True,
+            cwd=repo_root,
         )
         if result.stdout.strip() != "true":
             raise subprocess.CalledProcessError(1, "rev-parse")
@@ -104,6 +108,7 @@ def update_jwtek():
             capture_output=True,
             text=True,
             check=True,
+            cwd=repo_root,
         )
     except subprocess.CalledProcessError:
         print("[!] Failed to check repository status. Please run 'git status --porcelain' manually.")
@@ -114,16 +119,70 @@ def update_jwtek():
         return
 
     try:
-        subprocess.run(["git", "pull", "origin", "main"], check=True)
-        print("[+] JWTEK has been updated successfully.")
+        old_commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=repo_root,
+        ).stdout.strip()
+    except subprocess.CalledProcessError:
+        old_commit = None
+
+    try:
+        subprocess.run([
+            "git",
+            "pull",
+            "origin",
+            "main",
+        ], check=True, cwd=repo_root, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print("[!] Failed to update automatically. Please run:")
         print("    git pull origin main")
-        if e.stderr:
-            err = e.stderr.decode() if isinstance(e.stderr, bytes) else e.stderr
+        err = e.stderr or e.output
+        if err:
+            err = err.decode() if isinstance(err, bytes) else err
             err = err.strip()
             if err:
                 print(f"    Error: {err}")
+        return
+
+    try:
+        new_commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=repo_root,
+        ).stdout.strip()
+    except subprocess.CalledProcessError:
+        new_commit = None
+
+    if not old_commit or not new_commit:
+        print("[+] JWTEK has been updated.")
+        return
+
+    if old_commit == new_commit:
+        print("[=] JWTEK is already up to date.")
+        return
+
+    print("[+] JWTEK has been updated.\n")
+
+    try:
+        log_output = subprocess.run(
+            ["git", "log", "--pretty=format:%s", f"{old_commit}..{new_commit}"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=repo_root,
+        ).stdout.strip()
+        if log_output:
+            print("Recent changes:")
+            for line in log_output.splitlines():
+                if line.strip():
+                    print(f"- {line.strip()}")
+    except subprocess.CalledProcessError:
+        print("[!] Failed to list recent changes. Run 'git log' manually to see commit history.")
 
 def main(argv=None):
     parser_cli = argparse.ArgumentParser(

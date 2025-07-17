@@ -52,6 +52,7 @@ different ways:
 
 - Static analysis of JWTs with optional RS256 signature verification
 - Detects `alg: none`, weak algorithms, missing or expired claims
+- Flags `jku`/`x5u` headers and unusual `kid` patterns
 - Audits claims for potential privilege escalation
 - RS256 → HS256 downgrade detection
 - Extracts tokens from files and supports batch analysis
@@ -89,6 +90,8 @@ jwtek analyze --file ./tokens.txt --analyze-all
 jwtek exploit --vuln alg-none
 jwtek exploit --vuln hs256-key-found --secret secret123
 jwtek exploit --vuln alg-swap-rs256
+jwtek exploit --vuln jku-header
+jwtek exploit --vuln suspicious-kid
 ```
 
 ```bash

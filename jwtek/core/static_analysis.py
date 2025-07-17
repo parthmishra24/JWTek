@@ -11,6 +11,7 @@ def run_all_checks(header, payload):
     check_long_lifetime(payload)
     check_suspicious_iat(payload)
     check_rs256_alg_downgrade(header)
+    check_jku_x5u(header)
     check_suspicious_kid(header)
 
 def check_alg_none(header):
@@ -72,8 +73,17 @@ def check_suspicious_iat(payload):
 def check_suspicious_kid(header):
     kid = header.get('kid')
     if kid:
-        if '..' in kid or '/' in kid:
+        patterns = ['..', '/', 'http://', 'https://']
+        if any(p in kid for p in patterns):
             ui.warn(f"Suspicious kid value: {kid}")
+
+def check_jku_x5u(header):
+    jku = header.get('jku')
+    x5u = header.get('x5u')
+    if jku:
+        ui.warn(f"jku header present: {jku}")
+    if x5u:
+        ui.warn(f"x5u header present: {x5u}")
 
 def check_rs256_alg_downgrade(header):
     alg = header.get("alg", "")

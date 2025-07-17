@@ -108,7 +108,7 @@ jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 ### ⬆️ Update JWTEK
 
 ```bash
-jwtek update
+jwtek update --repo https://github.com/example/JWTek.git --branch dev
 ```
 
 ## 🧠 Author

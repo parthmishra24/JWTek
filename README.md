@@ -111,10 +111,6 @@ jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 jwtek update
 ```
 
-The command uses `pip install --upgrade` and adds `--break-system-packages`
-when running with pip 23 or newer.
-
-
 ## 🧠 Author
 
 - **Parth Mishra** – Security Engineer | AppSec

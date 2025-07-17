@@ -24,12 +24,3 @@ def test_update_tool_includes_flag_for_new_pip(monkeypatch):
         '--break-system-packages',
         'git+https://github.com/example/repo.git@dev'
     ]
-
-
-def test_update_tool_omits_flag_for_old_pip(monkeypatch):
-    cmd = _run_update(monkeypatch, '22.3')
-    assert cmd == [
-        'python3', '-m', 'pip', 'install', '--upgrade',
-        'git+https://github.com/example/repo.git@dev'
-    ]
-

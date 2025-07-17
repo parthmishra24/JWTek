@@ -102,6 +102,12 @@ jwtek exploit --list
 jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 ```
 
+### 🔄 Update JWTEK
+
+```bash
+jwtek update
+```
+
 ## 🧠 Author
 
 - **Parth Mishra** – Security Engineer | AppSec

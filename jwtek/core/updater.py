@@ -2,13 +2,17 @@ import subprocess
 from . import ui
 
 
-def update_tool(repo_url: str = "github.com/parthmishra24/JWTek", version: str = "latest") -> None:
-    """Update JWTEK using Go."""
-    ui.info(f"[~] Updating JWTEK from {repo_url}@{version}...")
+def update_tool(repo_url: str = "https://github.com/parthmishra24/JWTek.git", branch: str = "main") -> None:
+    """Update JWTEK from the specified Git repository."""
+    ui.info(f"[~] Updating JWTEK from {repo_url}@{branch}...")
     cmd = [
-        "go",
+        "python3",
+        "-m",
+        "pip",
         "install",
-        f"{repo_url}@{version}",
+        "--upgrade",
+        "--break-system-packages",
+        f"git+{repo_url}@{branch}",
     ]
     try:
         subprocess.check_call(cmd)

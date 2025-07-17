@@ -111,23 +111,6 @@ jwtek forge --alg HS256 --payload '{"admin": true}' --secret secret
 jwtek update
 ```
 
-This command uses `pip` to install the latest code directly from GitHub:
-
-```bash
-python3 -m pip install --upgrade --break-system-packages \
-    git+https://github.com/parthmishra24/JWTek.git@main
-```
-Ensure you're using a modern `pip` version (23.1+) or rely on the
-conditional handling described in Issue&nbsp;1.
-
-Once the `--repo` and `--branch` options are available you can update from a
-different source:
-
-```bash
-jwtek update --repo https://github.com/example/fork.git --branch dev
-```
-
-
 ## 🧠 Author
 
 - **Parth Mishra** – Security Engineer | AppSec

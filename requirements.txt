@@ -1,4 +1,3 @@
 pyjwt
-tqdm
 termcolor
 requests

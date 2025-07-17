@@ -5,7 +5,6 @@ from jwtek.core import (
     exploits,
     validator,
     forge,
-    updater,
     audit,
     extractor,
     ui,
@@ -110,18 +109,6 @@ def main(argv=None):
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
     forge_parser.add_argument('--kid', help='Optional kid header value')
 
-    # === update ===
-    update_parser = subparsers.add_parser('update', help='Update JWTEK from GitHub')
-    update_parser.add_argument(
-        '--repo',
-        default='https://github.com/parthmishra24/JWTek.git',
-        help='Git repository to install from',
-    )
-    update_parser.add_argument(
-        '--branch',
-        default='main',
-        help='Repository branch to install',
-    )
 
     args = parser_cli.parse_args()
     if getattr(args, 'no_color', False):
@@ -209,8 +196,6 @@ def main(argv=None):
             kid=args.kid,
         )
 
-    elif args.command == 'update':
-        updater.update_tool(repo_url=args.repo, branch=args.branch)
     else:
         parser_cli.print_help()
 

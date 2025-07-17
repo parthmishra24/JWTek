@@ -2,7 +2,6 @@ import argparse
 from jwtek.core import (
     parser,
     static_analysis,
-    brute_forcer,
     exploits,
     validator,
     forge,
@@ -92,12 +91,6 @@ def main(argv=None):
     analyze_parser.add_argument('--analyze-all', action='store_true', help='Extract and analyze all JWTs from file')
     analyze_parser.add_argument('--json-out', help='Write analysis results to JSON file')
 
-    # === brute-force ===
-    brute_parser = subparsers.add_parser('brute-force', help='Brute-force JWT secret for HS256')
-    brute_parser.add_argument('--token', required=True, help='JWT token to crack')
-    brute_parser.add_argument('--wordlist', required=True, help='Path to wordlist file or preset name')
-    brute_parser.add_argument('--threads', type=int, default=1, help='Number of threads to use')
-
     # === exploit ===
     exploit_parser = subparsers.add_parser('exploit', help='Show exploitation guidance')
     exploit_parser.add_argument('--vuln', help='Vulnerability ID (e.g., alg-none)')
@@ -180,11 +173,6 @@ def main(argv=None):
             with open(args.json_out, "w") as f:
                 json.dump({"header": header, "payload": payload}, f, indent=2)
 
-
-    elif args.command == 'brute-force':
-        token = args.token
-        wordlist = args.wordlist
-        brute_forcer.brute_force_hs256(token, wordlist, threads=args.threads)
 
     elif args.command == 'exploit':
         ui.section("💣 Exploit Guidance")

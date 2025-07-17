@@ -24,16 +24,13 @@ different ways:
 - Tokens can also be extracted from files with `--file` or analysed in batch
   using `--analyze-all`
 
-### 2. `brute-force`
-- Discover the secret for HS256 tokens using a wordlist
-
-### 3. `exploit`
+### 2. `exploit`
 - Get exploitation tips, generate PoC tokens, or attempt auth bypass testing
 
-### 4. `forge`
+### 3. `forge`
 - Create custom tokens using `none`, `HS256`, or `RS256`
 
-### 5. `update`
+### 4. `update`
 - Upgrade JWTEK to the latest version from GitHub
 
 ---
@@ -58,7 +55,6 @@ different ways:
 - Static analysis of JWTs with optional RS256 signature verification
 - Detects `alg: none`, weak algorithms, missing or expired claims
 - Audits claims for potential privilege escalation
-- Brute-forces HS256 secrets using custom or preset wordlists
 - RS256 → HS256 downgrade detection
 - Extracts tokens from files and supports batch analysis
 - Forge custom tokens using `none`, `HS256`, or `RS256`
@@ -89,26 +85,6 @@ jwtek analyze --token <JWT> --jwks <JWKS_URL>
 jwtek analyze --file ./tokens.txt --analyze-all
 ```
 
-### 🔐 Brute-force HS256
-
-```bash
-jwtek brute-force --token <JWT> --wordlist testlist.txt
-```
-
-Preset names such as `rockyou`, `jwt-secrets`, and `top10` can be used in place
-of a file path. JWTEK expects these wordlists at the following locations:
-
-- `rockyou` → `/usr/share/wordlists/rockyou.txt`
-- `jwt-secrets` → `data/wordlists/jwt-secrets.txt`
-- `top10` → `data/wordlists/top10.txt`
-
-If a preset wordlist isn't found at its location, JWTEK will display an error
-and you can supply your own wordlist path with `--wordlist`.
-
-The base directory for these presets can also be changed by setting the
-`JWTEK_WORDLIST_DIR` environment variable. On Linux this usually points to
-`/usr/share/wordlists` or a similar folder. macOS and Windows users may set the
-variable to their own wordlist directory.
 
 ### 💣 Exploitation Guidance
 

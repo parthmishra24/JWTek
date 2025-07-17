@@ -16,7 +16,6 @@ dummy_jwt.exceptions = dummy_exceptions
 sys.modules.setdefault("jwt", dummy_jwt)
 sys.modules.setdefault("jwt.exceptions", dummy_exceptions)
 sys.modules.setdefault("requests", type("Dummy", (), {})())
-sys.modules.setdefault("tqdm", type("Dummy", (), {"tqdm": lambda x, *a, **k: x})())
 sys.modules.setdefault("termcolor", type("Dummy", (), {"cprint": lambda *a, **k: None})())
 
 # Stub UI helpers to avoid colour output during tests

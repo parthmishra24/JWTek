@@ -19,3 +19,27 @@ def test_update_tool_runs_pip(monkeypatch):
         'git+https://github.com/example/repo.git@dev'
     ]
 
+
+def test_update_cli_forwards_args(monkeypatch):
+    import jwtek.__main__ as cli
+
+    called = {}
+
+    def fake_update_tool(repo_url, branch):
+        called['repo'] = repo_url
+        called['branch'] = branch
+
+    monkeypatch.setattr(cli.updater, 'update_tool', fake_update_tool)
+
+    import sys
+    monkeypatch.setattr(sys, 'argv', [
+        'jwtek', 'update', '--repo', 'https://github.com/example/repo.git', '--branch', 'dev'
+    ])
+
+    cli.main()
+
+    assert called == {
+        'repo': 'https://github.com/example/repo.git',
+        'branch': 'dev',
+    }
+

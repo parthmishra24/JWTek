@@ -54,3 +54,23 @@ def verify_signature_jwks(token, jwks_url):
         ui.error("Signature is invalid! Token may have been tampered with.")
     except Exception as e:
         ui.error(f"Error verifying signature using JWKS: {e}")
+
+
+def verify_signature_hmac(token, secret):
+    """Verify an HS256/384/512 signed token using the provided secret."""
+    ui.info("\n[~] Attempting to verify HMAC signature")
+    try:
+        decoded = jwt.decode(
+            token,
+            secret,
+            algorithms=["HS256", "HS384", "HS512"],
+            options={"verify_aud": False},
+        )
+        ui.success("[+] Signature verified successfully!")
+        ui.info(f"    Payload: {decoded}")
+    except jwt.ExpiredSignatureError:
+        ui.warn("Signature is valid but token is expired.")
+    except jwt.InvalidSignatureError:
+        ui.error("Signature is invalid! Token may have been tampered with.")
+    except Exception as e:
+        ui.error(f"Error verifying signature: {e}")

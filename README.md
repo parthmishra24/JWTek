@@ -20,6 +20,7 @@ different ways:
 ### 1. `analyze`
 - Decode a token and run static checks
 - Optional `--pubkey` to verify RS256 signatures
+- Optional `--secret` to verify HS256/384/512 signatures
 - `--audit` highlights suspicious privilege claims
 - Tokens can also be extracted from files with `--file` or analysed in batch
   using `--analyze-all`
@@ -50,7 +51,7 @@ different ways:
 
 ## 🚀 Features
 
-- Static analysis of JWTs with optional RS256 signature verification
+- Static analysis of JWTs with optional RS256 or HS256/384/512 signature verification
 - Detects `alg: none`, weak algorithms, missing or expired claims
 - Flags `jku`/`x5u` headers and unusual `kid` patterns
 - Audits claims for potential privilege escalation
@@ -80,6 +81,7 @@ between sequential tokens are displayed automatically at the end of the output.
 jwtek analyze --token <JWT>
 jwtek analyze --token <JWT> --pubkey ./public.pem --audit
 jwtek analyze --token <JWT> --jwks <JWKS_URL>
+jwtek analyze --token <JWT> --secret mysecret
 jwtek analyze --file ./tokens.txt --analyze-all
 ```
 

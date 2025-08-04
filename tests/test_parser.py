@@ -1,6 +1,7 @@
 import base64
 import json
 from jwtek.core import parser
+from datetime import datetime
 
 
 def forge_none(payload):
@@ -24,3 +25,13 @@ def test_decode_jwt_invalid():
     assert header == {}
     assert payload == {}
     assert signature == ""
+
+
+def test_pretty_print_jwt_formats_timestamps(capsys):
+    header = {}
+    ts = 0
+    payload = {"iat": ts, "exp": ts + 10, "nbf": ts}
+    parser.pretty_print_jwt(header, payload, "sig")
+    out = capsys.readouterr().out
+    human = datetime.fromtimestamp(ts).isoformat()
+    assert human in out

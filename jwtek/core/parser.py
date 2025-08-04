@@ -1,10 +1,22 @@
 import base64
 import json
+from datetime import datetime
 from . import ui
 
 def _b64_decode(data):
     padding = '=' * (-len(data) % 4)
     return base64.urlsafe_b64decode(data + padding)
+
+
+def _format_timestamps(payload):
+    formatted = payload.copy()
+    for claim in ("iat", "exp", "nbf"):
+        if claim in formatted:
+            try:
+                formatted[claim] = datetime.fromtimestamp(int(formatted[claim])).isoformat()
+            except Exception:
+                pass
+    return formatted
 
 def decode_jwt(token):
     try:
@@ -20,6 +32,6 @@ def pretty_print_jwt(header, payload, signature_b64):
     print("\n🧾 Decoded JWT Header:\n")
     print(json.dumps(header, indent=4))
     print("\n📦 Decoded JWT Payload:\n")
-    print(json.dumps(payload, indent=4))
+    print(json.dumps(_format_timestamps(payload), indent=4))
     print("\n🔏 Signature (base64):\n")
     print(signature_b64)

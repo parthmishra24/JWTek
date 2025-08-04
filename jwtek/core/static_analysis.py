@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from . import ui
 
 def run_all_checks(header, payload):
@@ -39,21 +40,30 @@ def check_expired(payload):
     exp = payload.get('exp')
     if exp:
         now = int(time.time())
-        if now > int(exp):
-            ui.warn("Token is expired.")
-        else:
-            ui.success("Token expiration OK.")
+        try:
+            exp_int = int(exp)
+            exp_human = datetime.fromtimestamp(exp_int).isoformat()
+            if now > exp_int:
+                ui.warn(f"Token is expired (exp: {exp_human}).")
+            else:
+                ui.success(f"Token expiration OK (exp: {exp_human}).")
+        except Exception:
+            ui.warn("Invalid exp timestamp format.")
 
 def check_long_lifetime(payload):
     exp = payload.get('exp')
     iat = payload.get('iat')
     if exp and iat:
         try:
-            lifetime = int(exp) - int(iat)
+            exp_int = int(exp)
+            iat_int = int(iat)
+            lifetime = exp_int - iat_int
+            exp_human = datetime.fromtimestamp(exp_int).isoformat()
+            iat_human = datetime.fromtimestamp(iat_int).isoformat()
             if lifetime > 3600 * 24 * 7:
-                ui.warn(f"Token lifetime unusually long: {lifetime} seconds")
+                ui.warn(f"Token lifetime unusually long: {lifetime} seconds ({iat_human} -> {exp_human})")
             else:
-                ui.success("Token lifetime within normal bounds.")
+                ui.success(f"Token lifetime within normal bounds ({iat_human} -> {exp_human}).")
         except Exception:
             pass
 
@@ -62,11 +72,12 @@ def check_suspicious_iat(payload):
     if iat:
         now = int(time.time())
         try:
-            iat = int(iat)
-            if iat > now + 300 or iat < now - (3600 * 24 * 365 * 10):
-                ui.warn(f"Suspicious issued-at (iat) timestamp: {iat}")
+            iat_int = int(iat)
+            iat_human = datetime.fromtimestamp(iat_int).isoformat()
+            if iat_int > now + 300 or iat_int < now - (3600 * 24 * 365 * 10):
+                ui.warn(f"Suspicious issued-at (iat) timestamp: {iat_human}")
             else:
-                ui.success("iat timestamp looks reasonable.")
+                ui.success(f"iat timestamp looks reasonable ({iat_human}).")
         except Exception:
             ui.warn("Invalid iat timestamp format.")
 

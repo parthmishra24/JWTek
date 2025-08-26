@@ -11,6 +11,7 @@ from jwtek.core import (
     extractor,
     bruteforce,
     ui,
+    scraper,
 )
 
 def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, secret=None, audit_flag=False, output_json=None):
@@ -207,6 +208,8 @@ def main(argv=None):
     analyze_parser.add_argument('--file', help='Path to file to extract JWT from')
     analyze_parser.add_argument('--analyze-all', action='store_true', help='Extract and analyze all JWTs from file')
     analyze_parser.add_argument('--json-out', help='Write analysis results to JSON file')
+    analyze_parser.add_argument('--login', help='Login URL for interactive scraping')
+    analyze_parser.add_argument('--dashboard', help='Dashboard URL for scraping after login')
 
     # === exploit ===
     exploit_parser = subparsers.add_parser('exploit', help='Show exploitation guidance')
@@ -249,6 +252,17 @@ def main(argv=None):
     token = None
 
     if args.command == 'analyze':
+        token = getattr(args, 'token', None)
+
+        if args.login and args.dashboard:
+            scraper.login_and_scrape(args.login, args.dashboard)
+            if not token and not getattr(args, 'file', None):
+                token = extractor.extract_from_file("jwt.txt")
+                if token:
+                    print(f"[+] Extracted JWT:\n{token}\n")
+                else:
+                    print("[!] No JWTs found in scraped data.")
+                    return
 
         if getattr(args, 'analyze_all', False) and getattr(args, 'file', None):
             analyze_all_from_file(
@@ -260,8 +274,6 @@ def main(argv=None):
                 output_json=args.json_out,
             )
             return
-
-        token = getattr(args, 'token', None)
 
         # 🔍 If no token is provided, try extracting from file
         if not token and getattr(args, 'file', None):

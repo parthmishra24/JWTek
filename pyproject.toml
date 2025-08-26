@@ -13,6 +13,7 @@ dependencies = [
     "pyjwt",
     "requests",
     "termcolor",
+    "playwright",
 ]
 
 [project.scripts]

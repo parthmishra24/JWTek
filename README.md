@@ -83,7 +83,13 @@ jwtek analyze --token <JWT> --pubkey ./public.pem --audit
 jwtek analyze --token <JWT> --jwks <JWKS_URL>
 jwtek analyze --token <JWT> --secret mysecret
 jwtek analyze --file ./tokens.txt --analyze-all
+jwtek analyze --login https://example.com/login --dashboard https://example.com/app
 ```
+
+Using `--login` and `--dashboard` launches a Chromium browser via Playwright. Log
+in manually on the provided login page, press Enter in the terminal, and JWTEK
+will navigate to the dashboard, capturing any JWTs from network traffic, cookies
+and web storage. Tokens are saved to `jwt.txt` for further analysis.
 
 
 ### 💣 Exploitation Guidance

@@ -29,7 +29,7 @@ different ways:
 - Get exploitation tips, generate PoC tokens, or attempt auth bypass testing
 
 ### 3. `forge`
-- Create custom tokens using `none`, `HS256`, or `RS256`
+- Create or convert tokens using `none`, `HS256`, or `RS256`
 
 
 ---
@@ -57,7 +57,7 @@ different ways:
 - Audits claims for potential privilege escalation
 - RS256 → HS256 downgrade detection
 - Extracts tokens from files and supports batch analysis
-- Forge custom tokens using `none`, `HS256`, or `RS256`
+- Forge custom tokens or convert existing ones using `none`, `HS256`, or `RS256`
 - Guided exploitation advice with PoCs and bypass testing
 - Extendable and modular structure
 - Colored console output for readability (disable with `--no-color` or `JWTEK_NO_COLOR=1`)
@@ -109,11 +109,14 @@ jwtek exploit --list
 
 ### ✨ Forge a JWT
 
-The `--payload` option accepts a JSON string describing the claims for the token.
-For example:
+The `forge` command can create a token from a JSON payload or convert an existing JWT using `--token`.
 
 ```bash
+# Forge from a payload
 jwtek forge --alg HS256 --payload '{"sub":"1234567890","name":"John Doe","admin":true}' --secret secret
+
+# Convert an RS256 token to alg none
+jwtek forge --alg none --token <JWT>
 ```
 
 ### 🔄 Update JWTEK

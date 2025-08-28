@@ -1,18 +1,30 @@
 import base64
 import json
 import jwt
-from . import ui
+from . import ui, parser
 
-def forge_jwt(alg, payload_str, secret=None, privkey_path=None, kid=None):
-    try:
-        payload = json.loads(payload_str)
-    except json.JSONDecodeError:
-        ui.error("Invalid payload format. Must be valid JSON.")
-        return
-
-    header = {"alg": alg, "typ": "JWT"}
-    if kid:
-        header["kid"] = kid
+def forge_jwt(alg, payload_str=None, token=None, secret=None, privkey_path=None, kid=None):
+    if token:
+        header, payload, _ = parser.decode_jwt(token)
+        if not header or not payload:
+            ui.error("Invalid token format. Could not decode.")
+            return
+        header["alg"] = alg
+        header.setdefault("typ", "JWT")
+        if kid:
+            header["kid"] = kid
+    else:
+        if payload_str is None:
+            ui.error("Payload JSON or token is required.")
+            return
+        try:
+            payload = json.loads(payload_str)
+        except json.JSONDecodeError:
+            ui.error("Invalid payload format. Must be valid JSON.")
+            return
+        header = {"alg": alg, "typ": "JWT"}
+        if kid:
+            header["kid"] = kid
 
     if alg == "none":
         header_b64 = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip("=")

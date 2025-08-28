@@ -226,12 +226,13 @@ def main(argv=None):
     forge_parser.add_argument('--alg', required=True, help="Algorithm to use (HS256, RS256, ES256, PS256, none)")
     forge_parser.add_argument(
         '--payload',
-        required=True,
+        required=False,
         help=(
             "JSON payload string, e.g. '{\"sub\":\"1234567890\","
-            "\"name\":\"John Doe\",\"admin\":true}'"
+            "\"name\":\"John Doe\",\"admin\":true}' (optional if --token is provided)"
         ),
     )
+    forge_parser.add_argument('--token', help='Existing JWT to convert/re-sign')
     forge_parser.add_argument('--secret', help="Secret key for HS256 (optional)")
     forge_parser.add_argument('--pubkey', help='Path to RSA public key (for RS256)')
     forge_parser.add_argument('--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
@@ -337,9 +338,13 @@ def main(argv=None):
             print("[!] Use --vuln to specify a vulnerability ID or --list to see options.")
 
     elif args.command == 'forge':
+        if (args.payload and args.token) or (not args.payload and not args.token):
+            print("[!] Provide either --payload or --token.")
+            return
         forge.forge_jwt(
             alg=args.alg,
             payload_str=args.payload,
+            token=args.token,
             secret=args.secret,
             privkey_path=args.privkey,
             kid=args.kid,

@@ -76,3 +76,45 @@ def test_forge_hs256_missing_secret():
     with mock.patch("jwtek.core.ui.error") as err:
         forge.forge_jwt("HS256", "{}")
         err.assert_called()
+
+
+def test_convert_rs256_to_none(tmp_path, capsys):
+    payload = {"foo": "bar"}
+    priv = tmp_path / "priv.pem"
+    priv.write_text("privkey")
+    forge.forge_jwt("RS256", json.dumps(payload), privkey_path=str(priv))
+    rs_token = capsys.readouterr().out.splitlines()[-1]
+    forge.forge_jwt("none", token=rs_token)
+    new_token = capsys.readouterr().out.splitlines()[-1]
+    header, decoded, signature = parser.decode_jwt(new_token)
+    assert header["alg"] == "none"
+    assert decoded == payload
+    assert signature == ""
+
+
+def test_convert_hs256_to_rs256(tmp_path, capsys):
+    payload = {"user": "bob"}
+    forge.forge_jwt("HS256", json.dumps(payload), secret="secret")
+    hs_token = capsys.readouterr().out.splitlines()[-1]
+    priv = tmp_path / "priv.pem"
+    priv.write_text("privkey")
+    forge.forge_jwt("RS256", token=hs_token, privkey_path=str(priv))
+    new_token = capsys.readouterr().out.splitlines()[-1]
+    header, decoded, signature = parser.decode_jwt(new_token)
+    assert header["alg"] == "RS256"
+    assert decoded == payload
+    assert signature == _b64(b"privkey")
+
+
+def test_convert_rs256_to_hs256(tmp_path, capsys):
+    payload = {"user": "bob"}
+    priv = tmp_path / "priv.pem"
+    priv.write_text("privkey")
+    forge.forge_jwt("RS256", json.dumps(payload), privkey_path=str(priv))
+    rs_token = capsys.readouterr().out.splitlines()[-1]
+    forge.forge_jwt("HS256", token=rs_token, secret="secret")
+    new_token = capsys.readouterr().out.splitlines()[-1]
+    header, decoded, signature = parser.decode_jwt(new_token)
+    assert header["alg"] == "HS256"
+    assert decoded == payload
+    assert signature == _b64(b"secret")

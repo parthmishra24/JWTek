@@ -42,7 +42,7 @@ def check_expired(payload):
         now = int(time.time())
         try:
             exp_int = int(exp)
-            exp_human = datetime.fromtimestamp(exp_int).isoformat()
+            exp_human = datetime.fromtimestamp(exp_int).strftime("%Y-%m-%d %H:%M:%S")
             if now > exp_int:
                 ui.warn(f"Token is expired (exp: {exp_human}).")
             else:
@@ -58,8 +58,8 @@ def check_long_lifetime(payload):
             exp_int = int(exp)
             iat_int = int(iat)
             lifetime = exp_int - iat_int
-            exp_human = datetime.fromtimestamp(exp_int).isoformat()
-            iat_human = datetime.fromtimestamp(iat_int).isoformat()
+            exp_human = datetime.fromtimestamp(exp_int).strftime("%Y-%m-%d %H:%M:%S")
+            iat_human = datetime.fromtimestamp(iat_int).strftime("%Y-%m-%d %H:%M:%S")
             if lifetime > 3600 * 24 * 7:
                 ui.warn(f"Token lifetime unusually long: {lifetime} seconds ({iat_human} -> {exp_human})")
             else:
@@ -73,7 +73,7 @@ def check_suspicious_iat(payload):
         now = int(time.time())
         try:
             iat_int = int(iat)
-            iat_human = datetime.fromtimestamp(iat_int).isoformat()
+            iat_human = datetime.fromtimestamp(iat_int).strftime("%Y-%m-%d %H:%M:%S")
             if iat_int > now + 300 or iat_int < now - (3600 * 24 * 365 * 10):
                 ui.warn(f"Suspicious issued-at (iat) timestamp: {iat_human}")
             else:

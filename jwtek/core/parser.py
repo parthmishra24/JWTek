@@ -13,7 +13,7 @@ def _format_timestamps(payload):
     for claim in ("iat", "exp", "nbf"):
         if claim in formatted:
             try:
-                formatted[claim] = datetime.fromtimestamp(int(formatted[claim])).isoformat()
+                formatted[claim] = datetime.fromtimestamp(int(formatted[claim])).strftime("%Y-%m-%d %H:%M:%S")
             except Exception:
                 pass
     return formatted

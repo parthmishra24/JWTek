@@ -33,5 +33,5 @@ def test_pretty_print_jwt_formats_timestamps(capsys):
     payload = {"iat": ts, "exp": ts + 10, "nbf": ts}
     parser.pretty_print_jwt(header, payload, "sig")
     out = capsys.readouterr().out
-    human = datetime.fromtimestamp(ts).isoformat()
+    human = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
     assert human in out

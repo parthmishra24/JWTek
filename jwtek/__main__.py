@@ -210,6 +210,7 @@ def main(argv=None):
     analyze_parser.add_argument('--json-out', help='Write analysis results to JSON file')
     analyze_parser.add_argument('--login', help='Login URL for interactive scraping')
     analyze_parser.add_argument('--dashboard', help='Dashboard URL for scraping after login')
+    analyze_parser.add_argument('--sP', help='Path to save scraped JWTs')
 
     # === exploit ===
     exploit_parser = subparsers.add_parser('exploit', help='Show exploitation guidance')
@@ -256,9 +257,10 @@ def main(argv=None):
         token = getattr(args, 'token', None)
 
         if args.login and args.dashboard:
-            scraper.login_and_scrape(args.login, args.dashboard)
+            out_path = args.sP or "jwt.txt"
+            scraper.login_and_scrape(args.login, args.dashboard, out_path=out_path)
             if not token and not getattr(args, 'file', None):
-                token = extractor.extract_from_file("jwt.txt")
+                token = extractor.extract_from_file(out_path)
                 if token:
                     print(f"[+] Extracted JWT:\n{token}\n")
                 else:

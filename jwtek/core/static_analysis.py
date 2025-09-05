@@ -101,4 +101,4 @@ def check_rs256_alg_downgrade(header):
     if alg.upper() == "RS256":
         ui.warn("Warning: Token uses RS256 (asymmetric). Check if the backend verifies key type correctly.")
         ui.warn("    Possible downgrade to HS256 and signature using public key as HMAC secret.")
-        ui.warn("    → Try exploit: jwtek exploit --vuln alg-swap-rs256\n")
+        ui.warn("    → Try exploit: jwtek exploit -vuln alg-swap-rs256\n")

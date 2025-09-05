@@ -5,7 +5,7 @@ from termcolor import cprint
 
 
 # Determine if colors should be disabled either via environment variable or
-# runtime flag.  The ``JWTEK_NO_COLOR`` env var mirrors the ``--no-color`` CLI
+# runtime flag.  The ``JWTEK_NO_COLOR`` env var mirrors the ``-no-color`` CLI
 # option added in ``__main__``.  Tests also modify this flag directly.
 NO_COLOR = os.environ.get("JWTEK_NO_COLOR") == "1"
 

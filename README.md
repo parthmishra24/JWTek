@@ -19,11 +19,11 @@ different ways:
 
 ### 1. `analyze`
 - Decode a token and run static checks
-- Optional `--pubkey` to verify RS256 signatures
-- Optional `--secret` to verify HS256/384/512 signatures
-- `--audit` highlights suspicious privilege claims
-- Tokens can also be extracted from files with `--file` or analysed in batch
-  using `--analyze-all`
+- Optional `-pubkey` to verify RS256 signatures
+- Optional `-secret` to verify HS256/384/512 signatures
+- `-audit` highlights suspicious privilege claims
+- Tokens can also be extracted from files with `-file` or analysed in batch
+  using `-analyze-all`
 
 ### 2. `exploit`
 - Get exploitation tips, generate PoC tokens, or attempt auth bypass testing
@@ -60,7 +60,7 @@ different ways:
 - Forge custom tokens or convert existing ones using `none`, `HS256`, or `RS256`
 - Guided exploitation advice with PoCs and bypass testing
 - Extendable and modular structure
-- Colored console output for readability (disable with `--no-color` or `JWTEK_NO_COLOR=1`)
+- Colored console output for readability (disable with `-no-color` or `JWTEK_NO_COLOR=1`)
 
 ---
 
@@ -70,54 +70,54 @@ different ways:
 jwtek <command> [options]
 ```
 The `jwtek` command becomes available after installation.
-Use `--no-color` or set `JWTEK_NO_COLOR=1` to disable ANSI colours.
+Use `-no-color` or set `JWTEK_NO_COLOR=1` to disable ANSI colours.
 
 ### 🔍 Analyze a JWT
 
-Use `--analyze-all` to extract and analyze every JWT from a file. Differences
+Use `-analyze-all` to extract and analyze every JWT from a file. Differences
 between sequential tokens are displayed automatically at the end of the output.
 
 ```bash
-jwtek analyze --token <JWT>
-jwtek analyze --token <JWT> --pubkey ./public.pem --audit
-jwtek analyze --token <JWT> --jwks <JWKS_URL>
-jwtek analyze --token <JWT> --secret mysecret
-jwtek analyze --file ./tokens.txt --analyze-all
-jwtek analyze --login https://example.com/login --dashboard https://example.com/app
-jwtek analyze --login https://example.com/login --dashboard https://example.com/app --sP myjwt.txt
+jwtek analyze -token <JWT>
+jwtek analyze -token <JWT> -pubkey ./public.pem -audit
+jwtek analyze -token <JWT> -jwks <JWKS_URL>
+jwtek analyze -token <JWT> -secret mysecret
+jwtek analyze -file ./tokens.txt -analyze-all
+jwtek analyze -login https://example.com/login -dashboard https://example.com/app
+jwtek analyze -login https://example.com/login -dashboard https://example.com/app -sP myjwt.txt
 ```
 
-Using `--login` and `--dashboard` launches a Chromium browser via Playwright. Log
+Using `-login` and `-dashboard` launches a Chromium browser via Playwright. Log
 in manually on the provided login page, press Enter in the terminal, and JWTEK
 will navigate to the dashboard, capturing any JWTs from network traffic, cookies
 and web storage. Tokens are saved to `jwt.txt` by default or to a custom path
-specified with `--sP` for further analysis.
+specified with `-sP` for further analysis.
 
 ### 💣 Exploitation Guidance
 
 ```bash
-jwtek exploit --vuln alg-none
-jwtek exploit --vuln hs256-key-found --secret secret123
-jwtek exploit --vuln alg-swap-rs256
-jwtek exploit --vuln jku-header
-jwtek exploit --vuln suspicious-kid
+jwtek exploit -vuln alg-none
+jwtek exploit -vuln hs256-key-found -secret secret123
+jwtek exploit -vuln alg-swap-rs256
+jwtek exploit -vuln jku-header
+jwtek exploit -vuln suspicious-kid
 ```
 
 ```bash
 # List all exploit IDs
-jwtek exploit --list
+jwtek exploit -list
 ```
 
 ### ✨ Forge a JWT
 
-The `forge` command can create a token from a JSON payload or convert an existing JWT using `--token`.
+The `forge` command can create a token from a JSON payload or convert an existing JWT using `-token`.
 
 ```bash
 # Forge from a payload
-jwtek forge --alg HS256 --payload '{"sub":"1234567890","name":"John Doe","admin":true}' --secret secret
+jwtek forge -alg HS256 -payload '{"sub":"1234567890","name":"John Doe","admin":true}' -secret secret
 
 # Convert an RS256 token to alg none
-jwtek forge --alg none --token <JWT>
+jwtek forge -alg none -token <JWT>
 ```
 
 ### 🔄 Update JWTEK

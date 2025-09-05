@@ -36,7 +36,7 @@ def forge_jwt(alg, payload_str=None, token=None, secret=None, privkey_path=None,
 
     elif alg == "HS256":
         if not secret:
-            ui.error("HS256 requires --secret to sign the token.")
+            ui.error("HS256 requires -secret to sign the token.")
             return
         token = jwt.encode(payload, secret, algorithm="HS256", headers=header)
         ui.success("\n[+] Forged JWT (HS256):")
@@ -45,7 +45,7 @@ def forge_jwt(alg, payload_str=None, token=None, secret=None, privkey_path=None,
 
     elif alg in {"RS256", "ES256", "PS256"}:
         if not privkey_path:
-            ui.error("{} requires --privkey path to sign the token.".format(alg))
+            ui.error("{} requires -privkey path to sign the token.".format(alg))
             return
         try:
             with open(privkey_path, "r") as f:

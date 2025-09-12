@@ -31,11 +31,11 @@ def test_save_path_option(monkeypatch, tmp_path):
         [
             "jwtek",
             "analyze",
-            "-login",
+            "-l",
             "http://login",
-            "-dashboard",
+            "-d",
             "http://dashboard",
-            "-sP",
+            "-S",
             str(save_file),
         ],
     )

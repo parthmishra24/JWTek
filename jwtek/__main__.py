@@ -194,55 +194,48 @@ def main(argv=None):
         prog='jwtek',
         description="🛡️ JWTEK: JWT Security Analysis & Exploitation Tool"
     )
-    parser_cli.add_argument('-no-color', action='store_true', help='Disable colored output')
+    parser_cli.add_argument('-n', '--no-color', action='store_true', help='Disable colored output')
 
     subparsers = parser_cli.add_subparsers(dest='command', help='Available commands')
 
     # === analyze ===
     analyze_parser = subparsers.add_parser('analyze', help='Static (or optional RS256) analysis of a JWT')
-    analyze_parser.add_argument('-token', required=False, help='JWT string to analyze')
-    analyze_parser.add_argument('-pubkey', help='Optional path to public key (PEM) for signature verification')
-    analyze_parser.add_argument('-jwks', help='URL to JWKS for signature verification')
-    analyze_parser.add_argument('-secret', help='Shared secret for HS256/384/512 verification')
-    analyze_parser.add_argument('-audit', action='store_true', help='Audit JWT claims for privilege abuse')
-    analyze_parser.add_argument('-file', help='Path to file to extract JWT from')
-    analyze_parser.add_argument('-analyze-all', action='store_true', help='Extract and analyze all JWTs from file')
-    analyze_parser.add_argument('-json-out', help='Write analysis results to JSON file')
-    analyze_parser.add_argument('-login', help='Login URL for interactive scraping')
-    analyze_parser.add_argument('-dashboard', help='Dashboard URL for scraping after login')
-    analyze_parser.add_argument('-sP', help='Path to save scraped JWTs')
+    analyze_parser.add_argument('-t', '--token', required=False, help='JWT string to analyze')
+    analyze_parser.add_argument('-k', '--pubkey', help='Optional path to public key (PEM) for signature verification')
+    analyze_parser.add_argument('-j', '--jwks', help='URL to JWKS for signature verification')
+    analyze_parser.add_argument('-s', '--secret', help='Shared secret for HS256/384/512 verification')
+    analyze_parser.add_argument('-a', '--audit', action='store_true', help='Audit JWT claims for privilege abuse')
+    analyze_parser.add_argument('-f', '--file', help='Path to file to extract JWT from')
+    analyze_parser.add_argument('-A', '--analyze-all', action='store_true', help='Extract and analyze all JWTs from file')
+    analyze_parser.add_argument('-o', '--json-out', help='Write analysis results to JSON file')
+    analyze_parser.add_argument('-l', '--login', help='Login URL for interactive scraping')
+    analyze_parser.add_argument('-d', '--dashboard', help='Dashboard URL for scraping after login')
+    analyze_parser.add_argument('-S', '--save-path', help='Path to save scraped JWTs')
 
     # === exploit ===
     exploit_parser = subparsers.add_parser('exploit', help='Show exploitation guidance')
-    exploit_parser.add_argument('-vuln', help='Vulnerability ID (e.g., alg-none)')
-    exploit_parser.add_argument('-secret', help='Optional secret key (for PoC or bypass)')
-    exploit_parser.add_argument('-url', help='Target URL for bypass testing')
-    exploit_parser.add_argument('-jwks', help='JWKS URL to fetch key for certain exploits')
-    exploit_parser.add_argument('-poc', action='store_true', help='Generate PoC token')
-    exploit_parser.add_argument('-bypass', action='store_true', help='Attempt authentication bypass using token')
-    exploit_parser.add_argument('-list', action='store_true', help='List available vulnerability IDs')
+    exploit_parser.add_argument('-v', '--vuln', help='Vulnerability ID (e.g., alg-none)')
+    exploit_parser.add_argument('-s', '--secret', help='Optional secret key (for PoC or bypass)')
+    exploit_parser.add_argument('-u', '--url', help='Target URL for bypass testing')
+    exploit_parser.add_argument('-j', '--jwks', help='JWKS URL to fetch key for certain exploits')
+    exploit_parser.add_argument('-p', '--poc', action='store_true', help='Generate PoC token')
+    exploit_parser.add_argument('-b', '--bypass', action='store_true', help='Attempt authentication bypass using token')
+    exploit_parser.add_argument('-l', '--list', action='store_true', help='List available vulnerability IDs')
 
     # === forge ===
     forge_parser = subparsers.add_parser('forge', help="Forge a custom JWT token")
-    forge_parser.add_argument('-alg', required=True, help="Algorithm to use (HS256, RS256, ES256, PS256, none)")
-    forge_parser.add_argument(
-        '-payload',
-        required=False,
-        help=(
-            "JSON payload string, e.g. '{\"sub\":\"1234567890\","
-            "\"name\":\"John Doe\",\"admin\":true}' (optional if -token is provided)"
-        ),
-    )
-    forge_parser.add_argument('-token', help='Existing JWT to convert/re-sign')
-    forge_parser.add_argument('-secret', help="Secret key for HS256 (optional)")
-    forge_parser.add_argument('-pubkey', help='Path to RSA public key (for RS256)')
-    forge_parser.add_argument('-privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
-    forge_parser.add_argument('-kid', help='Optional kid header value')
+    forge_parser.add_argument('-a', '--alg', required=True, help="Algorithm to use (HS256, RS256, ES256, PS256, none)")
+    forge_parser.add_argument('-p', '--payload', required=False, help="JSON payload string, e.g. '{\"sub\":\"1234567890\",\"name\":\"John Doe\",\"admin\":true}' (optional if -t/--token is provided)")
+    forge_parser.add_argument('-t', '--token', help='Existing JWT to convert/re-sign')
+    forge_parser.add_argument('-s', '--secret', help="Secret key for HS256 (optional)")
+    forge_parser.add_argument('-k', '--pubkey', help='Path to RSA public key (for RS256)')
+    forge_parser.add_argument('-r', '--privkey', help='Path to RSA private key (for RS256/ES256/PS256)')
+    forge_parser.add_argument('-i', '--kid', help='Optional kid header value')
 
     # === brute ===
     brute_parser = subparsers.add_parser('brute', help='Brute force HS* secret key')
-    brute_parser.add_argument('-token', required=True, help='JWT token to crack')
-    brute_parser.add_argument('-wordlist', required=True, help='Path to wordlist of secrets')
+    brute_parser.add_argument('-t', '--token', required=True, help='JWT token to crack')
+    brute_parser.add_argument('-w', '--wordlist', required=True, help='Path to wordlist of secrets')
 
     # === update ===
     subparsers.add_parser('update', help='Update JWTEK to the latest version')
@@ -257,7 +250,7 @@ def main(argv=None):
         token = getattr(args, 'token', None)
 
         if args.login and args.dashboard:
-            out_path = args.sP or "jwt.txt"
+            out_path = args.save_path or "jwt.txt"
             scraper.login_and_scrape(args.login, args.dashboard, out_path=out_path)
             if not token and not getattr(args, 'file', None):
                 token = extractor.extract_from_file(out_path)
@@ -288,7 +281,7 @@ def main(argv=None):
                 print(f"[+] Extracted JWT:\n{token}\n")
 
         if not token:
-            print("[!] Please provide a JWT token using -token or extract it using -file.")
+            print("[!] Please provide a JWT token using -t/--token or extract it using -f/--file.")
             return
 
         # 🧠 Proceed to analyze the token
@@ -331,17 +324,17 @@ def main(argv=None):
                 exploits.generate_poc_token(args.vuln, secret=args.secret, jwks_url=args.jwks)
             elif args.bypass:
                 if not args.url:
-                    print("[!] -url is required for bypass testing.")
+                    print("[!] -u/--url is required for bypass testing.")
                 else:
                     exploits.attempt_bypass(args.vuln, args.secret or "", args.url, jwks_url=args.jwks)
             else:
                 exploits.explain_exploit(args.vuln, secret=args.secret)
         else:
-            print("[!] Use -vuln to specify a vulnerability ID or -list to see options.")
+            print("[!] Use -v/--vuln to specify a vulnerability ID or -l/--list to see options.")
 
     elif args.command == 'forge':
         if (args.payload and args.token) or (not args.payload and not args.token):
-            print("[!] Provide either -payload or -token.")
+            print("[!] Provide either -p/--payload or -t/--token.")
             return
         forge.forge_jwt(
             alg=args.alg,

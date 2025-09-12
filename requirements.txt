@@ -2,3 +2,4 @@ pyjwt
 termcolor
 requests
 playwright
+pyee

@@ -118,3 +118,79 @@ def test_convert_rs256_to_hs256(tmp_path, capsys):
     assert header["alg"] == "HS256"
     assert decoded == payload
     assert signature == _b64(b"secret")
+
+
+def _set_inputs(monkeypatch, responses):
+    iterator = iter(responses)
+    monkeypatch.setattr("builtins.input", lambda prompt="": next(iterator))
+
+
+def test_interactive_edit_payload_multiple_fields(monkeypatch, capsys):
+    header = {"alg": "HS256", "typ": "JWT"}
+    payload = {"email": "old@example.com", "userid": 1}
+    _set_inputs(
+        monkeypatch,
+        [
+            "payload",
+            "email,userid",
+            "new@example.com",
+            "42",
+            "n",
+            "y",
+            "secret",
+        ],
+    )
+
+    forge.interactive_edit(header, payload, "sig")
+    output_lines = [line for line in capsys.readouterr().out.strip().splitlines() if line]
+    token = output_lines[-1]
+    new_header, new_payload, signature = parser.decode_jwt(token)
+    assert new_header["alg"] == "HS256"
+    assert new_payload["email"] == "new@example.com"
+    assert new_payload["userid"] == 42
+    assert signature == _b64(b"secret")
+
+
+def test_interactive_edit_change_alg_to_none(monkeypatch, capsys):
+    header = {"alg": "HS256", "typ": "JWT"}
+    payload = {"user": "alice"}
+    _set_inputs(
+        monkeypatch,
+        [
+            "header",
+            "alg",
+            "none",
+            "n",
+            "y",
+        ],
+    )
+
+    forge.interactive_edit(header, payload, "sig")
+    output_lines = [line for line in capsys.readouterr().out.strip().splitlines() if line]
+    token = output_lines[-1]
+    new_header, new_payload, signature = parser.decode_jwt(token)
+    assert new_header["alg"] == "none"
+    assert new_payload == payload
+    assert signature == "sig"
+
+
+def test_interactive_edit_signature_for_none(monkeypatch, capsys):
+    header = {"alg": "none", "typ": "JWT"}
+    payload = {"user": "alice"}
+    _set_inputs(
+        monkeypatch,
+        [
+            "signature",
+            "tampered",
+            "n",
+            "y",
+        ],
+    )
+
+    forge.interactive_edit(header, payload, "")
+    output_lines = [line for line in capsys.readouterr().out.strip().splitlines() if line]
+    token = output_lines[-1]
+    new_header, new_payload, signature = parser.decode_jwt(token)
+    assert new_header["alg"] == "none"
+    assert new_payload == payload
+    assert signature == "tampered"

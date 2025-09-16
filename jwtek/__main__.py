@@ -1,4 +1,5 @@
 import argparse
+import copy
 import subprocess
 from pathlib import Path
 from jwtek.core import (
@@ -211,6 +212,7 @@ def main(argv=None):
     analyze_parser.add_argument('-l', '--login', help='Login URL for interactive scraping')
     analyze_parser.add_argument('-d', '--dashboard', help='Dashboard URL for scraping after login')
     analyze_parser.add_argument('-S', '--save-path', help='Path to save scraped JWTs')
+    analyze_parser.add_argument('-e', '--edit', action='store_true', help='Interactively edit and forge the JWT after analysis')
 
     # === exploit ===
     exploit_parser = subparsers.add_parser('exploit', help='Show exploitation guidance')
@@ -313,6 +315,9 @@ def main(argv=None):
             import json
             with open(args.json_out, "w") as f:
                 json.dump({"header": header, "payload": payload}, f, indent=2)
+
+        if getattr(args, "edit", False):
+            forge.interactive_edit(copy.deepcopy(header), copy.deepcopy(payload), signature)
 
 
     elif args.command == 'exploit':

@@ -15,6 +15,7 @@ dependencies = [
     "termcolor",
     "playwright",
     "pyee",
+    "prompt_toolkit",
 ]
 
 [project.scripts]

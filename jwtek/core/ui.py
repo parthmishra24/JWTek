@@ -4,6 +4,13 @@ import os
 import sys
 from termcolor import cprint
 
+try:  # pragma: no cover - optional enhancement
+    from prompt_toolkit import prompt as pt_prompt
+    from prompt_toolkit.completion import PathCompleter
+except ImportError:  # pragma: no cover - prompt_toolkit not installed
+    pt_prompt = None  # type: ignore[assignment]
+    PathCompleter = None  # type: ignore[assignment]
+
 try:  # pragma: no cover - platform specific availability
     import readline  # type: ignore
 except ImportError:  # pragma: no cover - Windows fallback
@@ -61,6 +68,11 @@ def _path_completion_options(text: str, base_dir: str | None = None) -> list[str
 
 def prompt_path(prompt: str) -> str:
     """Prompt the user for a filesystem path with interactive tab completion."""
+
+    if pt_prompt is not None and PathCompleter is not None:
+        if all(getattr(stream, "isatty", lambda: False)() for stream in (sys.stdin, sys.stdout)):
+            completer = PathCompleter(expanduser=True)
+            return pt_prompt(prompt, completer=completer, complete_while_typing=True)
 
     if readline is None or not getattr(sys.stdin, "isatty", lambda: False)():
         return input(prompt)

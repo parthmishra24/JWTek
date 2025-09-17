@@ -13,6 +13,7 @@ from jwtek.core import (
     bruteforce,
     ui,
     scraper,
+    converter,
 )
 
 def analyze_all_from_file(file_path, pubkey=None, jwks_url=None, secret=None, audit_flag=False, output_json=None):
@@ -242,8 +243,16 @@ def main(argv=None):
     # === update ===
     subparsers.add_parser('update', help='Update JWTEK to the latest version')
 
+    # === convert ===
+    convert_parser = subparsers.add_parser(
+        'convert',
+        help='Convert keys from a JWKS file into PEM files'
+    )
+    convert_parser.add_argument('-i', '--input', required=True, help='Path to JWKS JSON file')
+    convert_parser.add_argument('-o', '--output', help='Output directory or PEM file path')
 
-    args = parser_cli.parse_args()
+
+    args = parser_cli.parse_args(argv)
     if getattr(args, 'no_color', False):
         ui.set_no_color(True)
     token = None
@@ -355,6 +364,16 @@ def main(argv=None):
 
     elif args.command == 'update':
         update_jwtek()
+
+    elif args.command == 'convert':
+        try:
+            written = converter.convert_jwks_to_pem(args.input, args.output)
+        except converter.JWKSConversionError as exc:
+            ui.error(f"[!] Failed to convert JWKS: {exc}")
+            return
+
+        for path in written:
+            ui.success(f"[+] Wrote PEM file: {path}")
 
     else:
         parser_cli.print_help()

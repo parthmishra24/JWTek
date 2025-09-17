@@ -58,6 +58,7 @@ different ways:
 - RS256 → HS256 downgrade detection
 - Extracts tokens from files and supports batch analysis
 - Forge custom tokens or convert existing ones using `none`, `HS256`, or `RS256`
+- Convert JWKS documents into PEM files for interoperability
 - Guided exploitation advice with PoCs and bypass testing
 - Extendable and modular structure
 - Colored console output for readability (disable with `-no-color` or `JWTEK_NO_COLOR=1`)
@@ -118,6 +119,18 @@ jwtek forge --alg HS256 --payload '{"sub":"1234567890","name":"John Doe","admin"
 
 # Convert an RS256 token to alg none
 jwtek forge --alg none --token <JWT>
+```
+
+### 🔁 Convert JWKS to PEM
+
+Extract PEM encoded RSA public keys from a JWKS document saved on disk. When
+the JWKS contains multiple keys a directory output is required so each key is
+saved to a separate file named after its `kid` (or index if the `kid` is
+missing).
+
+```bash
+jwtek convert --input ./jwks.json --output ./public.pem
+jwtek convert --input ./jwks.json --output ./pem-keys/
 ```
 
 ### 🔄 Update JWTEK

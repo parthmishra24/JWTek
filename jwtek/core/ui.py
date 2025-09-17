@@ -1,7 +1,87 @@
-"""Console UI helpers with optional color output."""
+"""Console UI helpers with optional color output and quality of life prompts."""
 
 import os
+import sys
 from termcolor import cprint
+
+try:  # pragma: no cover - platform specific availability
+    import readline  # type: ignore
+except ImportError:  # pragma: no cover - Windows fallback
+    readline = None
+
+
+def _path_completion_options(text: str, base_dir: str | None = None) -> list[str]:
+    """Return filesystem completion options for ``text`` relative to ``base_dir``."""
+
+    cwd = base_dir or os.getcwd()
+    if not text:
+        text = ""
+
+    expanded = os.path.expanduser(text)
+    if os.path.isabs(expanded):
+        expanded_abs = expanded
+    else:
+        expanded_abs = os.path.join(cwd, expanded)
+
+    search_dir: str
+    prefix: str
+    display_prefix: str
+
+    if os.path.isdir(expanded_abs) and text.endswith(os.sep):
+        search_dir = expanded_abs
+        prefix = ""
+        display_prefix = text
+    else:
+        search_dir = os.path.dirname(expanded_abs)
+        prefix = os.path.basename(expanded_abs)
+        display_prefix = os.path.dirname(text)
+        if display_prefix:
+            display_prefix = display_prefix.rstrip(os.sep) + os.sep
+
+    if not search_dir:
+        search_dir = cwd
+
+    try:
+        entries = sorted(os.listdir(search_dir))
+    except OSError:
+        return []
+
+    suggestions: list[str] = []
+    for name in entries:
+        if prefix and not name.startswith(prefix):
+            continue
+        full_path = os.path.join(search_dir, name)
+        display = f"{display_prefix}{name}" if display_prefix else name
+        if os.path.isdir(full_path):
+            display = display.rstrip(os.sep) + os.sep
+        suggestions.append(display)
+
+    return suggestions
+
+
+def prompt_path(prompt: str) -> str:
+    """Prompt the user for a filesystem path with interactive tab completion."""
+
+    if readline is None or not getattr(sys.stdin, "isatty", lambda: False)():
+        return input(prompt)
+
+    def completer(text: str, state: int) -> str | None:
+        options = _path_completion_options(text)
+        if state < len(options):
+            return options[state]
+        return None
+
+    previous_completer = readline.get_completer()
+    previous_delims = readline.get_completer_delims()
+
+    try:
+        readline.set_completer_delims(" \t\n\"'")
+        readline.set_completer(completer)
+        readline.parse_and_bind("tab: complete")
+        return input(prompt)
+    finally:
+        readline.set_completer(previous_completer)
+        readline.set_completer_delims(previous_delims)
 
 
 # Determine if colors should be disabled either via environment variable or

@@ -242,7 +242,7 @@ def interactive_edit(header, payload, signature):
             payload_dict=working_payload,
         )
     elif algorithm in {"RS256", "ES256", "PS256"}:
-        privkey_path = input(f"Path to private key for {algorithm} signing: ").strip()
+        privkey_path = ui.prompt_path(f"Path to private key for {algorithm} signing: ").strip()
         if not privkey_path:
             ui.error(f"Private key path is required for {algorithm} tokens.")
             return
